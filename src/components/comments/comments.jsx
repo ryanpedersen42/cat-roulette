@@ -30,3 +30,5 @@ const CommentComponent = (props) => {
     />
   )
 }
+
+export default CommentComponent;
