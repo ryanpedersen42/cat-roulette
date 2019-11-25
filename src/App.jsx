@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ProfileHover from 'profile-hover';
 import Web3 from 'web3';
+import ThreeBoxComments from '3box-comments-react';
 
 import './App.css';
 const Box = require('3box')
@@ -28,23 +29,6 @@ class App extends Component {
     await this.loadWeb3()
     // await this.loadBlockchainData()
   }
-  
-  // async loadBlockchainData() {
-  //   const web3 = window.web3
-  //   const accounts = await web3.eth.getAccounts()
-  //   this.setState({ account: accounts[0] })
-  //   const networkId = await web3.eth.net.getId()
-  //   const networkData = Pet.networks[networkId]
-  //   if(networkData) {
-  //     const contract = web3.eth.Contract(Pet.abi, networkData.address)
-  //     this.setState({ contract })
-  //     const petHash = await contract.methods.get().call()
-  //     this.setState({ petHash })
-
-  //   } else {
-  //     window.alert('contract not deployed to detected network')
-  //   }
-  // }
 
   async loadWeb3() {
     if (window.ethereum) {
