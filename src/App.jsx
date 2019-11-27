@@ -21,7 +21,8 @@ class App extends Component {
       web3: null,
       ethAddress: '',
       box: null,
-      dappSpace: ''
+      dappSpace: '',
+      imageDescription: ''
     }
   }
 
@@ -71,15 +72,21 @@ class App extends Component {
     await this.setState({ box, dappSpace, ethAddress });
   }
 
+  descriptionHandler = (event) => {
+    //adjust timing here
+    this.setState({ imageDescription: event.target.value})
+    console.log(this.state.imageDescription)
+  }
+
   addTo3Box = async () => {
-    const { ethAddress, dappSpace, petHash } = this.state;
+    const { ethAddress, dappSpace, petHash, imageDescription } = this.state;
 
     const toJsonExample = [
       {
-        poster: 'some name',
+        poster: '',
         ethAddress: ethAddress,
-        image: petHash,
-        imageDecription: 'my little woofer',
+        petHash: petHash,
+        imageDecription: imageDescription,
         location: '3box location from profile'
       }
     ]
@@ -96,7 +103,8 @@ class App extends Component {
     const { dappSpace } = this.state;
 
     try {
-      const testThis = await dappSpace.public.get('11/21/2019')
+      // const testThis = await dappSpace.public.get('11/21/2019')
+      const testThis = await dappSpace.all()
       console.log(JSON.parse(testThis))
     } catch(err) {
       console.error(err)
@@ -154,7 +162,6 @@ class App extends Component {
                   alt='current'
                   />
                   {box && 
-
                   <CommentComponent
                     ethAddress={ethAddress}
                     petHash={petHash}
@@ -171,6 +178,11 @@ class App extends Component {
                 </form>
                 <button onClick={this.testThisOne}>try this</button>
                 <button onClick={this.getFrom3Box}>get from 3box</button>
+                <input 
+                  value={this.state.imageDescription}
+                  onChange={this.descriptionHandler} 
+                  name="imageDescription"
+                />
               </div>
             </main>
           </div>
