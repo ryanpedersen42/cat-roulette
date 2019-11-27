@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ProfileHover from 'profile-hover';
 import Web3 from 'web3';
-import ThreeBoxComments from '3box-comments-react';
+import CommentComponent from './components/comments/comments';
 
 import './App.css';
 const Box = require('3box')
@@ -93,7 +93,7 @@ class App extends Component {
   }
 
   getFrom3Box = async () => {
-    const { ethAddress, dappSpace, petHash } = this.state;
+    const { dappSpace } = this.state;
 
     try {
       const testThis = await dappSpace.public.get('11/21/2019')
@@ -101,6 +101,10 @@ class App extends Component {
     } catch(err) {
       console.error(err)
     }
+  }
+
+  testThisOne = async () => {
+    await console.log(this.state.dappSpace)
   }
 
   onSubmit = (event) => {
@@ -119,19 +123,18 @@ class App extends Component {
   }
 
   render() {
-    const { ethAddress, box } = this.state;
+    const { ethAddress, box, dappSpace, petHash } = this.state;
     return (
       <div>
       
         <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-        {box && <> </>}
-          <a
+          <div
             className="navbar-brand col-sm-3 col-md-2 mr-0"
             target="_blank"
             rel="noopener noreferrer"
           >
            Cat Roulette
-          </a>
+          </div>
           {
           box 
           ? 
@@ -150,13 +153,23 @@ class App extends Component {
                   src={`https://ipfs.infura.io/ipfs/${this.state.petHash}`} 
                   alt='current'
                   />
+                  {box && 
+
+                  <CommentComponent
+                    ethAddress={ethAddress}
+                    petHash={petHash}
+                    spaceName={dappSpace._name}
+                    box={box}
+                    myAddress={ethAddress}
+                   />
+                  }
                 <p>&nbsp;</p>
                 <h2>New Pic</h2>
                 <form onSubmit={this.onSubmit} >
                   <input type='file' onChange={this.captureFile} />
                   <input type='submit' />
                 </form>
-                <button onClick={this.addTo3Box}>try this</button>
+                <button onClick={this.testThisOne}>try this</button>
                 <button onClick={this.getFrom3Box}>get from 3box</button>
               </div>
             </main>

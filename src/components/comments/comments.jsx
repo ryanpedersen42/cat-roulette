@@ -1,18 +1,17 @@
 import React from 'react';
 import ThreeBoxComments from '3box-comments-react';
 
-const CommentComponent = (props) => {
+const CommentComponent = ({ ethAddress, petHash, spaceName, box, myAddress}) => {
   return (
     <ThreeBoxComments 
         // required
-        // spaceName="mySpaceName"
-        // threadName="myThreadName"
-        // adminEthAddr={adminEthAddr}
-
+        spaceName={spaceName}
+        threadName={petHash}
+        adminEthAddr={ethAddress}
 
         // // Required props for context A) & B)
-        // box={box}
-        // currentUserAddr={myAddress}
+        box={box}
+        currentUserAddr={ethAddress}
 
         // // Required prop for context B)
         // loginFunction={handleLogin}
