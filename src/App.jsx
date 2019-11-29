@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import ProfileHover from 'profile-hover';
 import Web3 from 'web3';
 import CommentComponent from './components/comments/comments';
+import moment from 'moment';
 
 import './App.css';
+import { isString } from 'util';
 const Box = require('3box')
 
 const ipfsClient = require('ipfs-http-client')
@@ -21,14 +23,15 @@ class App extends Component {
       web3: null,
       ethAddress: '',
       box: null,
+      userProfile: null,
       dappSpace: '',
-      imageDescription: ''
+      imageDescription: '',
+      ipfsPosts: []
     }
   }
 
   async componentWillMount() {
     await this.loadWeb3()
-    // await this.loadBlockchainData()
   }
 
   async loadWeb3() {
@@ -40,8 +43,23 @@ class App extends Component {
       window.web3 = new Web3(window.web3.currentProvider)
     }
     else {
-      window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
+      window.alert('Non-Ethereum browser detected!')
     }
+  }
+  
+  auth3Box = async () => {
+    const ethAddresses = await window.ethereum.enable();
+    const ethAddress = ethAddresses[0];
+
+    const box = await Box.openBox(ethAddress, window.ethereum, {});
+
+    await new Promise((resolve, reject) => box.onSyncDone(resolve));
+
+    const userProfile = await Box.getProfile(ethAddress)
+
+    const dappSpace = await box.openSpace('catSpace');
+
+    await this.setState({ box, dappSpace, ethAddress, userProfile });
   }
 
   captureFile = (event) => {
@@ -55,21 +73,44 @@ class App extends Component {
     }
   }
 
-  auth3Box = async () => {
-    // web3 actions to authenticate with metamask or other provider
-    const ethAddresses = await window.ethereum.enable();
-    const ethAddress = ethAddresses[0];
-    // authenticate and get profile data
-    const box = await Box.openBox(ethAddress, window.ethereum, {});
-    await console.log(box)
-    // promise resolution.. waiting from 3Box onSyncDone confirmation
-    await new Promise((resolve, reject) => box.onSyncDone(resolve));
+  fetchPosts = async () => {
+    const { dappSpace } = this.state;
 
-    //open s3cretkeep3r space
-    const dappSpace = await box.openSpace('catSpace');
+    //looking for 15 characters
 
-    // set all to state and continue
-    await this.setState({ box, dappSpace, ethAddress });
+    try {
+      // const testThis = await dappSpace.public.get('11/21/2019')
+      const testThis = await dappSpace.public.all()
+      // console.log(testThis)
+      
+      // for (let value of Object.values(testThis)) {
+      //   console.log(Array.isArray(JSON.parse(value)))
+      //   // console.log('new one', value); // John, then 30
+      // }
+      const date = moment().subtract(10, 'days').calendar().toString()
+      console.log(isString(date))
+      console.log(date)
+
+      Object.keys(testThis).forEach(function (values) {
+        let returnArray = []
+
+        // console.log(values); // key
+        console.log(testThis[values]); // value
+
+        console.log(Array.isArray(testThis[values]))
+        // console.log(testThis[values]); // value
+      });
+
+      for (let key of Object.keys(testThis)) {
+        console.log('length', key.length)
+
+        console.log('new key', key); // John, then 30
+      }
+      // console.log(testThis[1])
+      // console.log(JSON.parse(testThis[1]))
+    } catch(err) {
+      console.error(err)
+    }
   }
 
   descriptionHandler = (event) => {
@@ -78,45 +119,40 @@ class App extends Component {
     console.log(this.state.imageDescription)
   }
 
-  addTo3Box = async () => {
-    const { ethAddress, dappSpace, petHash, imageDescription } = this.state;
-
-    const toJsonExample = [
-      {
-        poster: '',
-        ethAddress: ethAddress,
-        petHash: petHash,
-        imageDecription: imageDescription,
-        location: '3box location from profile'
-      }
-    ]
-
-    try {
-      await dappSpace.public.set('11/21/2019', JSON.stringify(toJsonExample));
-    } catch(err) {
-      console.log(err);
-    }
-    
-  }
-
+  
   getFrom3Box = async () => {
     const { dappSpace } = this.state;
-
+    
     try {
-      // const testThis = await dappSpace.public.get('11/21/2019')
-      const testThis = await dappSpace.all()
+      const testThis = await dappSpace.public.get('11/27/2019')
       console.log(JSON.parse(testThis))
     } catch(err) {
       console.error(err)
     }
   }
 
-  testThisOne = async () => {
-    await console.log(this.state.dappSpace)
+  addTo3Box = async () => {
+    const { ethAddress, dappSpace, petHash, imageDescription } = this.state;
+    const date = moment().subtract(10, 'days').calendar().toString()
+    const randomString = Math.random().toString(36).substring(2, 6)
+    const key = `${date}_${randomString}`
+
+    const imageInfo = [
+      {
+        ethAddress: ethAddress,
+        petHash: petHash,
+        imageDecription: imageDescription,
+      }
+    ]
+
+    try {   
+      await dappSpace.public.set(key, JSON.stringify(imageInfo));
+    } catch(err) {
+      console.log(err);
+    }
   }
 
-  onSubmit = (event) => {
-    event.preventDefault()
+  addToIPFS = () => {
     ipfs.add(this.state.buffer, (error, result) => {
       const petHash = result[0].hash
       this.setState({ petHash })
@@ -124,17 +160,24 @@ class App extends Component {
         console.error(error)
         return
       }
-      this.state.contract.methods.set(result[0].hash).send({ from: this.state.account }).then((r) => {
-        return this.setState({ petHash: result[0].hash })
-      })
     })
+  }
+
+  onSubmit = async (event) => {
+    event.preventDefault()
+
+    try {
+      await this.addToIPFS()
+      await this.addTo3Box()
+    } catch(err) {
+      console.error(err)
+    }
   }
 
   render() {
     const { ethAddress, box, dappSpace, petHash } = this.state;
     return (
       <div>
-      
         <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
           <div
             className="navbar-brand col-sm-3 col-md-2 mr-0"
@@ -176,8 +219,9 @@ class App extends Component {
                   <input type='file' onChange={this.captureFile} />
                   <input type='submit' />
                 </form>
-                <button onClick={this.testThisOne}>try this</button>
-                <button onClick={this.getFrom3Box}>get from 3box</button>
+                <button onClick={this.addTo3Box}>try this</button>
+                <button onClick={this.fetchPosts}>get from 3box</button>
+                <button onClick={this.getFrom3Box}>get single post 3box</button>
                 <input 
                   value={this.state.imageDescription}
                   onChange={this.descriptionHandler} 
