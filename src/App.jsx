@@ -18,9 +18,10 @@ class App extends Component {
     this.state = {
       buffer: null,
       account: null,
-      petHash: "QmeYUtP4yoAMbnXnLyGssUScMHWCpBiYYPN83jdRfn312k",
+      petHash: 'QmeYUtP4yoAMbnXnLyGssUScMHWCpBiYYPN83jdRfn312k',
       contract: null,
       web3: null,
+      adminEthAddress: '0x55c4eb985536f74f354dbaf7dd2d8891e9373504',
       ethAddress: '',
       box: null,
       userProfile: null,
@@ -31,7 +32,8 @@ class App extends Component {
   }
 
   async componentWillMount() {
-    await this.loadWeb3()
+    // await this.loadWeb3()
+    // await this.auth3Box()
   }
 
   async loadWeb3() {
@@ -76,55 +78,36 @@ class App extends Component {
   fetchPosts = async () => {
     const { dappSpace } = this.state;
 
-    //looking for 15 characters
-
     try {
-      // const testThis = await dappSpace.public.get('11/21/2019')
       const testThis = await dappSpace.public.all()
-      // console.log(testThis)
-      
-      // for (let value of Object.values(testThis)) {
-      //   console.log(Array.isArray(JSON.parse(value)))
-      //   // console.log('new one', value); // John, then 30
-      // }
-      const date = moment().subtract(10, 'days').calendar().toString()
-      console.log(isString(date))
-      console.log(date)
 
+      let returnArray = []
       Object.keys(testThis).forEach(function (values) {
-        let returnArray = []
-
-        // console.log(values); // key
-        console.log(testThis[values]); // value
-
-        console.log(Array.isArray(testThis[values]))
-        // console.log(testThis[values]); // value
+        if (values.length === 15) {
+          returnArray.push(values)
+        }
       });
-
-      for (let key of Object.keys(testThis)) {
-        console.log('length', key.length)
-
-        console.log('new key', key); // John, then 30
-      }
-      // console.log(testThis[1])
-      // console.log(JSON.parse(testThis[1]))
+      this.setState({ ipfsPosts: returnArray})
     } catch(err) {
       console.error(err)
     }
+    console.log(this.state.ipfsPosts)
   }
 
   descriptionHandler = (event) => {
     //adjust timing here
     this.setState({ imageDescription: event.target.value})
-    console.log(this.state.imageDescription)
   }
 
+  consoleTest = () => {
+    console.log(this.state.buffer)
+  }
   
   getFrom3Box = async () => {
     const { dappSpace } = this.state;
     
     try {
-      const testThis = await dappSpace.public.get('11/27/2019')
+      const testThis = await dappSpace.public.get('11/20/2019_w0ll')
       console.log(JSON.parse(testThis))
     } catch(err) {
       console.error(err)
@@ -157,25 +140,38 @@ class App extends Component {
       const petHash = result[0].hash
       this.setState({ petHash })
       if(error) {
-        console.error(error)
+        console.log(error)
         return
       }
     })
   }
 
-  onSubmit = async (event) => {
+  onSubmit = (event) => {
     event.preventDefault()
+    event.preventDefault()
+    ipfs.add(this.state.buffer, (error, result) => {
+      const petHash = result[0].hash
+      this.setState({ petHash })
+      if(error) {
+        console.error(error)
+        return
+      }
+      this.addTo3Box()
+      this.setState({ buffer: null, imageDecription: ''})
+    })
 
-    try {
-      await this.addToIPFS()
-      await this.addTo3Box()
-    } catch(err) {
-      console.error(err)
-    }
+    // try {
+    //   await console.log('first')
+    //   await this.addToIPFS()
+    //   await console.log('second')
+    //   await this.addTo3Box()
+    // } catch(err) {
+    //   console.error(err)
+    // }
   }
 
   render() {
-    const { ethAddress, box, dappSpace, petHash } = this.state;
+    const { ethAddress, box, dappSpace, petHash, adminEthAddress } = this.state;
     return (
       <div>
         <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
@@ -191,7 +187,8 @@ class App extends Component {
           ? 
           <ProfileHover address={ethAddress}
           showName
-          orientation='left' /> 
+          // orientation='left'
+           /> 
           :
           <button onClick={this.auth3Box}>auth 3box</button>
           }
@@ -208,6 +205,7 @@ class App extends Component {
                   <CommentComponent
                     ethAddress={ethAddress}
                     petHash={petHash}
+                    adminEthAddress={adminEthAddress}
                     spaceName={dappSpace._name}
                     box={box}
                     myAddress={ethAddress}
@@ -221,7 +219,7 @@ class App extends Component {
                 </form>
                 <button onClick={this.addTo3Box}>try this</button>
                 <button onClick={this.fetchPosts}>get from 3box</button>
-                <button onClick={this.getFrom3Box}>get single post 3box</button>
+                <button onClick={this.getFrom3Box}>test buffer</button>
                 <input 
                   value={this.state.imageDescription}
                   onChange={this.descriptionHandler} 
