@@ -5,9 +5,8 @@ import CommentComponent from './components/comments/comments';
 import moment from 'moment';
 
 import './App.css';
-import { isString } from 'util';
-const Box = require('3box')
 
+const Box = require('3box')
 const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' }) 
 
@@ -23,6 +22,7 @@ class App extends Component {
       web3: null,
       adminEthAddress: '0x55c4eb985536f74f354dbaf7dd2d8891e9373504',
       ethAddress: '',
+      currentResult: {},
       box: null,
       userProfile: null,
       dappSpace: '',
@@ -32,8 +32,13 @@ class App extends Component {
   }
 
   async componentWillMount() {
-    // await this.loadWeb3()
-    // await this.auth3Box()
+    try {
+      await this.loadWeb3()
+      await this.auth3Box()
+      await this.fetchPosts()
+    } catch(err) {
+      console.error(err)
+    }
   }
 
   async loadWeb3() {
@@ -48,18 +53,40 @@ class App extends Component {
       window.alert('Non-Ethereum browser detected!')
     }
   }
+
+  newImageHandler = async () => {
+    const { ipfsPosts, dappSpace } = this.state;
+  
+    function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    const randomKeyNumber = getRandomInt(0, ipfsPosts.length - 1)
+
+    // console.log('the post', ipfsPosts[randomKeyNumber])
+    
+    try {
+      const testThis = await dappSpace.public.get(ipfsPosts[randomKeyNumber])
+      const parsedResult = JSON.parse(testThis)
+      const currentResult = parsedResult[0]
+      await this.setState({ currentResult, petHash: currentResult.petHash })
+      // console.log(JSON.parse(testThis))
+    } catch(err) {
+      console.error(err)
+    }
+  }
+
   
   auth3Box = async () => {
     const ethAddresses = await window.ethereum.enable();
     const ethAddress = ethAddresses[0];
 
     const box = await Box.openBox(ethAddress, window.ethereum, {});
-
     await new Promise((resolve, reject) => box.onSyncDone(resolve));
 
-    const userProfile = await Box.getProfile(ethAddress)
-
     const dappSpace = await box.openSpace('catSpace');
+    const userProfile = await Box.getProfile(ethAddress)
 
     await this.setState({ box, dappSpace, ethAddress, userProfile });
   }
@@ -79,28 +106,21 @@ class App extends Component {
     const { dappSpace } = this.state;
 
     try {
-      const testThis = await dappSpace.public.all()
-
-      let returnArray = []
-      Object.keys(testThis).forEach(function (values) {
+      const dappSpaceData = await dappSpace.public.all()
+      let ipfsKeyArray = []
+      Object.keys(dappSpaceData).forEach(function (values) {
         if (values.length === 15) {
-          returnArray.push(values)
+          ipfsKeyArray.push(values)
         }
       });
-      this.setState({ ipfsPosts: returnArray})
+      this.setState({ ipfsPosts: ipfsKeyArray})
     } catch(err) {
       console.error(err)
     }
-    console.log(this.state.ipfsPosts)
   }
 
   descriptionHandler = (event) => {
-    //adjust timing here
     this.setState({ imageDescription: event.target.value})
-  }
-
-  consoleTest = () => {
-    console.log(this.state.buffer)
   }
   
   getFrom3Box = async () => {
@@ -219,7 +239,7 @@ class App extends Component {
                 </form>
                 <button onClick={this.addTo3Box}>try this</button>
                 <button onClick={this.fetchPosts}>get from 3box</button>
-                <button onClick={this.getFrom3Box}>test buffer</button>
+                <button onClick={this.newImageHandler}>test buffer</button>
                 <input 
                   value={this.state.imageDescription}
                   onChange={this.descriptionHandler} 
