@@ -1,44 +1,37 @@
-import React, { useState } from 'react';
-import ipfs from '../../ipfs';
+import React from 'react';
+import CommentComponent from '../../components/comments/comments';
+import { createStructuredSelector } from 'reselect';
+import { connect } from 'react-redux';
+import { selectCurrentPetHash } from '../../redux/posts/posts.selectors.js'
 
-const MainPage = (props) => {
-  const [buffer, setBuffer] = useState(null);
-  const [petHash, setPetHash] = useState('');
+const mapStateToProps = createStructuredSelector({
+  currentPetHash: selectCurrentPetHash,
+})
 
-  const captureFile = (event) => {
-    event.preventDefault()
-    const file = event.target.files[0]
-    const reader = new window.FileReader()
-    reader.readAsArrayBuffer(file)
-    reader.onloadend = () => {
-      setBuffer(Buffer(reader.result))
-    }
-  }
-
-  const onSubmit = (event) => {
-    event.preventDefault()
-    ipfs.add(buffer, (error, result) => {
-      const petHash = result[0].hash
-      setPetHash(petHash);
-
-      if(error) {
-        console.error(error)
-        return
-      }
-      // this.state.contract.methods.set(result[0].hash).send({ from: this.state.account }).then((r) => {
-      //   return setPetHash(result[0].hash)
-      // })
-    })
-  }
-
+const MainPage = ({ match, location, ethAddress, adminEthAddress, spaceName, box, newImageHandler, currentPetHash }) => {
   return (
-    <div>
-      <form onSubmit={this.onSubmit} >
-        <input type='file' onChange={this.captureFile} />
-        <input type='submit' />
-      </form>
+    <main role="main" className="col-lg-12 d-flex text-center">
+    <button onClick={newImageHandler}>new image</button>
+    <div className="content mr-auto ml-auto">
+        <img 
+        className='image'
+        src={`https://ipfs.infura.io/ipfs/${currentPetHash}`} 
+        alt='current'
+        />
+        {box &&
+        <CommentComponent
+          ethAddress={ethAddress}
+          petHash={currentPetHash}
+          adminEthAddress={adminEthAddress}
+          spaceName={spaceName}
+          box={box}
+          myAddress={ethAddress}
+         />
+        }
+      <p>&nbsp;</p>
     </div>
+  </main>
   )
 }
 
-export default MainPage;
+export default connect(mapStateToProps)(MainPage);

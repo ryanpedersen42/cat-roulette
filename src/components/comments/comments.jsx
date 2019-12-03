@@ -1,24 +1,23 @@
 import React from 'react';
 import ThreeBoxComments from '3box-comments-react';
+import { createStructuredSelector } from 'reselect';
+import { connect } from 'react-redux';
+import { selectCurrentPetHash } from '../../redux/posts/posts.selectors.js'
 
-const CommentComponent = ({ ethAddress, petHash, spaceName, box, myAddress, adminEthAddr}) => {
+const mapStateToProps = createStructuredSelector({
+  currentPetHash: selectCurrentPetHash,
+})
+
+const CommentComponent = ({ ethAddress, spaceName, box, currentPetHash }) => {
   return (
     <ThreeBoxComments 
         spaceName={spaceName}
-        threadName={petHash}
+        threadName={currentPetHash}
         adminEthAddr='0x55c4eb985536f74f354dbaf7dd2d8891e9373504'
         box={box}
         currentUserAddr={ethAddress}
-
-        // // optional
-        // members={false}
-        // showCommentCount={10}
-        // threadOpts={{}}
-        // useHovers={false}
-        // currentUser3BoxProfile={currentUser3BoxProfile}
-        // userProfileURL={address => `https://mywebsite.com/user/${address}`}
     />
   )
 }
 
-export default CommentComponent;
+export default connect(mapStateToProps)(CommentComponent);

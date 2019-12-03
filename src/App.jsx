@@ -1,14 +1,28 @@
 import React, { Component } from 'react';
-import ProfileHover from 'profile-hover';
 import Web3 from 'web3';
-import CommentComponent from './components/comments/comments';
-import moment from 'moment';
+import { Switch, Route, withRouter } from 'react-router-dom';
+import { createStructuredSelector } from 'reselect';
 
+import moment from 'moment';
+import { connect } from 'react-redux';
+import MainPage from './pages/main-page/main-page';
+import AuthPage from './pages/auth-page/auth-page';
+
+import { setCurrentPetHash } from './redux/posts/posts.actions';
+import { selectCurrentPetHash } from './redux/posts/posts.selectors';
 import './App.css';
 
 const Box = require('3box')
 const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' }) 
+
+const mapDispatchToProps = dispatch => ({
+  setCurrentPetHash: user => dispatch(setCurrentPetHash(user))
+});
+
+const mapStateToProps = createStructuredSelector({
+  currentPetHash: selectCurrentPetHash,
+})
 
 class App extends Component {
   constructor(props){
@@ -17,7 +31,7 @@ class App extends Component {
     this.state = {
       buffer: null,
       account: null,
-      petHash: 'QmeYUtP4yoAMbnXnLyGssUScMHWCpBiYYPN83jdRfn312k',
+      petHash: '',
       contract: null,
       web3: null,
       adminEthAddress: '0x55c4eb985536f74f354dbaf7dd2d8891e9373504',
@@ -27,7 +41,8 @@ class App extends Component {
       userProfile: null,
       dappSpace: '',
       imageDescription: '',
-      ipfsPosts: []
+      ipfsPosts: [],
+      isAppReady: false,
     }
   }
 
@@ -36,9 +51,19 @@ class App extends Component {
       await this.loadWeb3()
       await this.auth3Box()
       await this.fetchPosts()
+      await this.newImageHandler()
     } catch(err) {
       console.error(err)
     }
+  }
+
+  async componentDidMount() {
+    const { box } = this.state;
+    const { history } = this.props;
+
+    // if you haven't openedBox, return to login
+    if (!box) history.push('/');
+    this.setState({ isAppReady: true });
   }
 
   async loadWeb3() {
@@ -55,6 +80,8 @@ class App extends Component {
   }
 
   newImageHandler = async () => {
+    const { setCurrentPetHash, history } = this.props;
+
     const { ipfsPosts, dappSpace } = this.state;
   
     function getRandomInt(min, max) {
@@ -63,21 +90,22 @@ class App extends Component {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
     const randomKeyNumber = getRandomInt(0, ipfsPosts.length - 1)
-
-    // console.log('the post', ipfsPosts[randomKeyNumber])
     
     try {
       const testThis = await dappSpace.public.get(ipfsPosts[randomKeyNumber])
       const parsedResult = JSON.parse(testThis)
       const currentResult = parsedResult[0]
       await this.setState({ currentResult, petHash: currentResult.petHash })
-      // console.log(JSON.parse(testThis))
+      await setCurrentPetHash(currentResult.petHash)
+
+      //workaround to get the component to reload
+      history.push('/')
+      history.push('/main')
     } catch(err) {
       console.error(err)
     }
   }
 
-  
   auth3Box = async () => {
     const ethAddresses = await window.ethereum.enable();
     const ethAddress = ethAddresses[0];
@@ -89,6 +117,8 @@ class App extends Component {
     const userProfile = await Box.getProfile(ethAddress)
 
     await this.setState({ box, dappSpace, ethAddress, userProfile });
+    // history.push(`/${this.props.currentPetHash}`)
+
   }
 
   captureFile = (event) => {
@@ -168,90 +198,48 @@ class App extends Component {
 
   onSubmit = (event) => {
     event.preventDefault()
-    event.preventDefault()
-    ipfs.add(this.state.buffer, (error, result) => {
-      const petHash = result[0].hash
-      this.setState({ petHash })
-      if(error) {
-        console.error(error)
-        return
-      }
-      this.addTo3Box()
-      this.setState({ buffer: null, imageDecription: ''})
-    })
-
-    // try {
-    //   await console.log('first')
-    //   await this.addToIPFS()
-    //   await console.log('second')
-    //   await this.addTo3Box()
-    // } catch(err) {
-    //   console.error(err)
-    // }
+    this.addToIPFS()
+    this.addTo3Box()
+    this.setState({ buffer: null, imageDecription: ''})
   }
 
   render() {
-    const { ethAddress, box, dappSpace, petHash, adminEthAddress } = this.state;
+    const { ethAddress, box, dappSpace, adminEthAddress, isAppReady } = this.state;
     return (
-      <div>
-        <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-          <div
-            className="navbar-brand col-sm-3 col-md-2 mr-0"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-           Cat Roulette
-          </div>
-          {
-          box 
-          ? 
-          <ProfileHover address={ethAddress}
-          showName
-          // orientation='left'
-           /> 
-          :
-          <button onClick={this.auth3Box}>auth 3box</button>
-          }
-        </nav>
-        <div className="container-fluid mt-5">
-          <div className="row">
-            <main role="main" className="col-lg-12 d-flex text-center">
-              <div className="content mr-auto ml-auto">
-                  <img 
-                  src={`https://ipfs.infura.io/ipfs/${this.state.petHash}`} 
-                  alt='current'
-                  />
-                  {box && 
-                  <CommentComponent
-                    ethAddress={ethAddress}
-                    petHash={petHash}
-                    adminEthAddress={adminEthAddress}
-                    spaceName={dappSpace._name}
-                    box={box}
-                    myAddress={ethAddress}
-                   />
-                  }
-                <p>&nbsp;</p>
-                <h2>New Pic</h2>
-                <form onSubmit={this.onSubmit} >
-                  <input type='file' onChange={this.captureFile} />
-                  <input type='submit' />
-                </form>
-                <button onClick={this.addTo3Box}>try this</button>
-                <button onClick={this.fetchPosts}>get from 3box</button>
-                <button onClick={this.newImageHandler}>test buffer</button>
-                <input 
-                  value={this.state.imageDescription}
-                  onChange={this.descriptionHandler} 
-                  name="imageDescription"
+
+      <div className="App">
+        {isAppReady && (<React.Fragment>
+          <Switch>
+            <Route
+              exact
+              path='/'
+              render={() => <AuthPage 
+                auth3box={this.auth3Box}
+                box={box}
+               />}
+            />
+            <Route
+              exact
+              path='/main'
+              render={() => (
+                <MainPage
+                  ethAddress={ethAddress}
+                  petHash={this.props.currentPetHash}
+                  adminEthAddress={adminEthAddress}
+                  spaceName={dappSpace._name}
+                  box={box}
+                  myAddress={ethAddress}
+
+                  newImageHandler={this.newImageHandler}
                 />
-              </div>
-            </main>
-          </div>
-        </div>
+              )}
+            />
+          </Switch>
+        </React.Fragment>)}
       </div>
+
     );
   }
 }
 
-export default App;
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));
