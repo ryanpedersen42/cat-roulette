@@ -4,12 +4,16 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectCurrentUserData } from '../../redux/user/user.selectors';
 
+import './profile-page.styles.scss';
+
 const mapStateToProps = createStructuredSelector({
   user: selectCurrentUserData, 
 })
 
 const ProfilePage = ({ box, dappSpace, user }) => (
-  <div className='profile-page'>Profile Page
+  <>
+  <h1>Profile Page</h1>
+  <div className='profile-page'>
       <div className='profile-edit'>
         <EditProfile
             box={box}
@@ -19,6 +23,7 @@ const ProfilePage = ({ box, dappSpace, user }) => (
         />
       </div>
      </div>
+  </>
 )
 
 export default connect(mapStateToProps)(ProfilePage);
