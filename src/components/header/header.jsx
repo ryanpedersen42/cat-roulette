@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import { selectCurrentUserData } from '../../redux/user/user.selectors';
+
 import HeaderDropdown from '../header-dropdown/header-dropdown';
+import CustomButton from '../custom-button/custom-button';
 
 import './header.styles.scss';
 
-//todo
-//redux action for handle logout 
+const mapStateToProps = createStructuredSelector({
+  user: selectCurrentUserData, 
+})
 
 class Header extends Component {
   constructor(props){
@@ -20,7 +26,7 @@ class Header extends Component {
   }
 
   render(){
-    const { handleLogout, box } = this.props;
+    const { handleLogout, box, user } = this.props;
     const { hidden } = this.state;
     return (
       <div className='header'>
@@ -29,20 +35,14 @@ class Header extends Component {
         </div>
         <div className='options'>
         <a className='option' href='https://github.com/ryanpedersen42/cat-roulette'>GitHub</a>
-        <button onClick={this.toggleHeader}>toggle header</button>
-          {
-            hidden ? '' : <HeaderDropdown box={box} handleLogout={handleLogout} />
-          }
-          {/* <a className='option' href='https://github.com/ryanpedersen42/cat-roulette'>GitHub</a>
-          {
-            box ? 
-          <div className='option' onClick={handleLogout}>Sign Out</div> :
-          <div className='option'>Sign In to 3Box</div> 
-          } */}
+        <div className='option' onClick={this.toggleHeader}>{user.userProfile.name}</div>
+        {
+          hidden ? '' : <HeaderDropdown box={box} handleLogout={handleLogout} />
+        }
         </div>
       </div>
     )
   }
 }
 
-export default Header;
+export default connect(mapStateToProps)(Header);

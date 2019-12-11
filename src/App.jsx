@@ -10,7 +10,7 @@ import AuthPage from './pages/auth-page/auth-page';
 import { setCurrentPetHash } from './redux/posts/posts.actions';
 import { selectCurrentPetHash } from './redux/posts/posts.selectors';
 
-import { setEthAddress, logUserIn, logUserOut } from './redux/user/user.actions';
+import { setEthAddress, logUserIn, setUserProfile } from './redux/user/user.actions';
 import { selectCurrentUserData } from './redux/user/user.selectors';
 
 import './App.css';
@@ -21,7 +21,7 @@ const mapDispatchToProps = dispatch => ({
   setCurrentPetHash: user => dispatch(setCurrentPetHash(user)),
   setEthAddress: user => dispatch(setEthAddress(user)),
   logUserIn: () => dispatch(logUserIn()),
-  logUserOut: () => dispatch(logUserOut())
+  setUserProfile: user => dispatch(setUserProfile(user))
 });
 
 const mapStateToProps = createStructuredSelector({
@@ -123,15 +123,19 @@ class App extends Component {
   }
 
   auth3Box = async () => {
-    const { user, logUserIn } = this.props;
+    const { user, logUserIn, history, setUserProfile } = this.props;
 
     const box = await Box.openBox(user.ethAddress, window.ethereum, {});
     await new Promise((resolve, reject) => box.onSyncDone(resolve));
 
     const dappSpace = await box.openSpace('catSpace');
+    const userProfile = await Box.getProfile(user.ethAddress)
 
     await this.setState({ box, dappSpace });
+    await setUserProfile(userProfile)
     await logUserIn()
+    history.push('/main')
+
   }
 
   fetchPosts = async () => {

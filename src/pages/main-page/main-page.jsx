@@ -22,16 +22,9 @@ const MainPage = ({ ethAddress, adminEthAddress, handleLogout, spaceName, box, n
       handleLogout={handleLogout}
      />
     <div className="main-page">
-    { box && ethAddress ? (
-      <ProfileHover
-      address={ethAddress}
-      orientation='right'
-       /> 
-      ) 
-      : 
-      null
-      }
+    <div className='roulette-button'>
     <CustomButton onClick={newImageHandler}>New Image</CustomButton>
+    </div>
     <div className="image-container">
         <img 
         className='image'

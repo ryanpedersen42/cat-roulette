@@ -1,8 +1,9 @@
-import { SET_ETH_ADDRESS, LOG_IN, LOG_OUT } from '../constants';
+import { SET_ETH_ADDRESS, LOG_IN, LOG_OUT, SET_USER_PROFILE } from '../constants';
 
 const INITIAL_STATE = {
   ethAddress: '',
   isAuth: false,
+  userProfile: null,
 };
 
 const userReducer = (state = INITIAL_STATE, action) => {
@@ -20,7 +21,14 @@ const userReducer = (state = INITIAL_STATE, action) => {
       case LOG_OUT:
         return {
           ...state,
-          isAuth: false
+          isAuth: false,
+          ethAddress: '',
+          userProfile: null,
+        }
+      case SET_USER_PROFILE: 
+        return {
+          ...state,
+          userProfile: action.payload
         }
     default:
       return state;

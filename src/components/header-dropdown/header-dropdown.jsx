@@ -10,18 +10,14 @@ const mapStateToProps = createStructuredSelector({
   user: selectCurrentUserData, 
 })
 
-const HeaderDropdown = ({ handleLogout, user, box }) => (
+const HeaderDropdown = ({ handleLogout }) => (
   <div className='header-dropdown'>
-    <div className='dropdown-items'>
-     <a className='option' href='https://github.com/ryanpedersen42/cat-roulette'>GitHub</a>
-          {
-            user.isAuth ? 
-          <div className='' onClick={handleLogout}>Sign Out</div> :
-          <div className=''>Sign In to 3Box</div> 
-          }
-    </div>
-    <CustomButton onClick={handleLogout}>
-    SIGN OUT</CustomButton>
+    <CustomButton className='dropdown-items' onClick={() => ('do something')}>
+      PROFILE
+    </CustomButton>
+    <CustomButton className='dropdown-items' onClick={handleLogout}>
+      SIGN OUT
+    </CustomButton>
   </div>
 );
 

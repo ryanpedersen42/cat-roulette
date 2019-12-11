@@ -2,6 +2,7 @@
 export const SET_ETH_ADDRESS = 'SET_ETH_ADDRESS';
 export const LOG_OUT = 'LOG_OUT';
 export const LOG_IN = 'LOG_IN ';
+export const SET_USER_PROFILE = 'SET_USER_PROFILE';
 
 //posts consts
 export const FETCH_POSTS_START = 'FETCH_POSTS_START';

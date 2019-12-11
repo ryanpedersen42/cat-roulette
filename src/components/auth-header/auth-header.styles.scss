@@ -1,34 +1,32 @@
-.main-page {
+.header {
+  height: 70px;
+  width: 100%;
   font-family: 'Roboto Mono';
   display: flex;
   justify-content: space-between;
-  flex-direction: column;
   margin-bottom: 25px;
+  background-color: rgb(78, 53, 189);
 
-  .roulette-button {
-    margin: 0 auto;
-  }
-
-  .image-container {
-    max-width: 50%;
-    max-height: 50%;
+  .options {
+    width: 50%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    flex-direction: column;
     padding-right: 25px;
-    margin: 0 auto;
-
-    .image {
-      border-color: black;
-      border-width: 2px;
-      border-style: solid;
-    }
     
     .option {
       padding: 10px 15px;
       cursor: pointer;
       color: white;
     }
+  }
+
+  .logo {
+    width: 7%;
+    color: white;
+    font-size: 20px;
+    padding-left: 10px;
+    align-items: center;
   }
 }
