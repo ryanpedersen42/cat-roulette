@@ -1,0 +1,13 @@
+.profile-page {
+  font-family: 'Roboto Mono';
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  margin-bottom: 25px;
+
+  .profile-edit {
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+  }
+}

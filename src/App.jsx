@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import Web3 from 'web3';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
-
 import { connect } from 'react-redux';
+
 import MainPage from './pages/main-page/main-page';
 import AuthPage from './pages/auth-page/auth-page';
+import ProfilePage from './pages/profile-page/profile-page';
 
 import { setCurrentPetHash } from './redux/posts/posts.actions';
 import { selectCurrentPetHash } from './redux/posts/posts.selectors';
@@ -185,6 +186,16 @@ class App extends Component {
                 />
               )}
             />
+              <Route
+              exact
+              path='/profile'
+              render={() => (
+                <ProfilePage
+                  dappSpace={dappSpace}
+                  box={box}
+                />
+                )}
+                />
           </Switch>
         </React.Fragment>)}
       </div>

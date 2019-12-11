@@ -17,7 +17,6 @@ const MainPage = ({ ethAddress, adminEthAddress, handleLogout, spaceName, box, n
   return (
     <>
     <Header
-      ethAddress={ethAddress}
       box={box}
       handleLogout={handleLogout}
      />

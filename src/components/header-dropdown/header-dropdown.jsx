@@ -1,24 +1,20 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import CustomButton from '../custom-button/custom-button';
-import { createStructuredSelector } from 'reselect';
-import { selectCurrentUserData } from '../../redux/user/user.selectors';
+import { withRouter } from 'react-router-dom';
 
 import './header-dropdown.styles.scss';
 
-const mapStateToProps = createStructuredSelector({
-  user: selectCurrentUserData, 
-})
-
-const HeaderDropdown = ({ handleLogout }) => (
+const HeaderDropdown = ({ handleLogout, history }) => (
   <div className='header-dropdown'>
-    <CustomButton className='dropdown-items' onClick={() => ('do something')}>
+    <div>
+    <CustomButton className='dropdown-items' onClick={() => history.push('/profile')}>
       PROFILE
     </CustomButton>
     <CustomButton className='dropdown-items' onClick={handleLogout}>
       SIGN OUT
     </CustomButton>
+    </div>
   </div>
 );
 
-export default connect(mapStateToProps)(HeaderDropdown);
+export default withRouter(HeaderDropdown);
