@@ -1,0 +1,29 @@
+.main-page {
+  font-family: 'Roboto Mono';
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  margin-bottom: 25px;
+
+  .image-container {
+    max-width: 50%;
+    max-height: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-direction: column;
+    padding-right: 25px;
+
+    .image {
+      border-color: black;
+      border-width: 2px;
+      border-style: solid;
+    }
+    
+    .option {
+      padding: 10px 15px;
+      cursor: pointer;
+      color: white;
+    }
+  }
+}

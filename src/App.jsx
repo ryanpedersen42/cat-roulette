@@ -3,25 +3,30 @@ import Web3 from 'web3';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 
-import moment from 'moment';
 import { connect } from 'react-redux';
 import MainPage from './pages/main-page/main-page';
 import AuthPage from './pages/auth-page/auth-page';
 
 import { setCurrentPetHash } from './redux/posts/posts.actions';
 import { selectCurrentPetHash } from './redux/posts/posts.selectors';
+
+import { setEthAddress, logUserIn, logUserOut } from './redux/user/user.actions';
+import { selectCurrentUserData } from './redux/user/user.selectors';
+
 import './App.css';
 
 const Box = require('3box')
-const ipfsClient = require('ipfs-http-client')
-const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' }) 
 
 const mapDispatchToProps = dispatch => ({
-  setCurrentPetHash: user => dispatch(setCurrentPetHash(user))
+  setCurrentPetHash: user => dispatch(setCurrentPetHash(user)),
+  setEthAddress: user => dispatch(setEthAddress(user)),
+  logUserIn: () => dispatch(logUserIn()),
+  logUserOut: () => dispatch(logUserOut())
 });
 
 const mapStateToProps = createStructuredSelector({
   currentPetHash: selectCurrentPetHash,
+  user: selectCurrentUserData, 
 })
 
 class App extends Component {
@@ -61,15 +66,18 @@ class App extends Component {
     const { box } = this.state;
     const { history } = this.props;
 
-    // if you haven't openedBox, return to login
     if (!box) history.push('/');
     this.setState({ isAppReady: true });
   }
 
   async loadWeb3() {
+    const { setEthAddress } = this.props;
+
     if (window.ethereum) {
       window.web3 = new Web3(window.ethereum)
-      await window.ethereum.enable()
+      const ethAddresses = await window.ethereum.enable()
+      const ethAddress = ethAddresses[0]
+      await setEthAddress(ethAddress)
     }
     else if (window.web3) {
       window.web3 = new Web3(window.web3.currentProvider)
@@ -106,35 +114,28 @@ class App extends Component {
     }
   }
 
-  auth3Box = async () => {
-    const ethAddresses = await window.ethereum.enable();
-    const ethAddress = ethAddresses[0];
+  handleLogout = async () => {
+    const { history } = this.props;
+    const { box } = this.state;
 
-    const box = await Box.openBox(ethAddress, window.ethereum, {});
+    await box.logout();
+    history.push('/');
+  }
+
+  auth3Box = async () => {
+    const { user, logUserIn } = this.props;
+
+    const box = await Box.openBox(user.ethAddress, window.ethereum, {});
     await new Promise((resolve, reject) => box.onSyncDone(resolve));
 
     const dappSpace = await box.openSpace('catSpace');
-    const userProfile = await Box.getProfile(ethAddress)
 
-    await this.setState({ box, dappSpace, ethAddress, userProfile });
-    // history.push(`/${this.props.currentPetHash}`)
-
-  }
-
-  captureFile = (event) => {
-    event.preventDefault()
-    //process file for IPFS
-    const file = event.target.files[0]
-    const reader = new window.FileReader()
-    reader.readAsArrayBuffer(file)
-    reader.onloadend = () => {
-      this.setState({ buffer: Buffer(reader.result)})
-    }
+    await this.setState({ box, dappSpace });
+    await logUserIn()
   }
 
   fetchPosts = async () => {
     const { dappSpace } = this.state;
-
     try {
       const dappSpaceData = await dappSpace.public.all()
       let ipfsKeyArray = []
@@ -147,60 +148,6 @@ class App extends Component {
     } catch(err) {
       console.error(err)
     }
-  }
-
-  descriptionHandler = (event) => {
-    this.setState({ imageDescription: event.target.value})
-  }
-  
-  getFrom3Box = async () => {
-    const { dappSpace } = this.state;
-    
-    try {
-      const testThis = await dappSpace.public.get('11/20/2019_w0ll')
-      console.log(JSON.parse(testThis))
-    } catch(err) {
-      console.error(err)
-    }
-  }
-
-  addTo3Box = async () => {
-    const { ethAddress, dappSpace, petHash, imageDescription } = this.state;
-    const date = moment().subtract(10, 'days').calendar().toString()
-    const randomString = Math.random().toString(36).substring(2, 6)
-    const key = `${date}_${randomString}`
-
-    const imageInfo = [
-      {
-        ethAddress: ethAddress,
-        petHash: petHash,
-        imageDecription: imageDescription,
-      }
-    ]
-
-    try {   
-      await dappSpace.public.set(key, JSON.stringify(imageInfo));
-    } catch(err) {
-      console.log(err);
-    }
-  }
-
-  addToIPFS = () => {
-    ipfs.add(this.state.buffer, (error, result) => {
-      const petHash = result[0].hash
-      this.setState({ petHash })
-      if(error) {
-        console.log(error)
-        return
-      }
-    })
-  }
-
-  onSubmit = (event) => {
-    event.preventDefault()
-    this.addToIPFS()
-    this.addTo3Box()
-    this.setState({ buffer: null, imageDecription: ''})
   }
 
   render() {
@@ -224,13 +171,13 @@ class App extends Component {
               render={() => (
                 <MainPage
                   ethAddress={ethAddress}
-                  petHash={this.props.currentPetHash}
                   adminEthAddress={adminEthAddress}
                   spaceName={dappSpace._name}
                   box={box}
                   myAddress={ethAddress}
 
                   newImageHandler={this.newImageHandler}
+                  handleLogout={this.handleLogout}
                 />
               )}
             />

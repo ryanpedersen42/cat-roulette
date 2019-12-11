@@ -1,6 +1,14 @@
-import { SET_CURRENT_USER } from '../constants';
+import { SET_ETH_ADDRESS, LOG_IN, LOG_OUT } from '../constants';
 
-export const setCurrentUser = user => ({
-  type: SET_CURRENT_USER,
-  payload: user
-});
+export const setEthAddress = ethAddress => ({
+  type: SET_ETH_ADDRESS,
+  payload: ethAddress
+})
+
+export const logUserIn = () => ({
+  type: LOG_IN,
+})
+
+export const logUserOut = () => ({
+  type: LOG_OUT,
+})

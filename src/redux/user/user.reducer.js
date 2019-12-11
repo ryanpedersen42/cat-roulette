@@ -1,18 +1,27 @@
-import { SET_CURRENT_USER } from '../constants';
+import { SET_ETH_ADDRESS, LOG_IN, LOG_OUT } from '../constants';
 
 const INITIAL_STATE = {
-  // currentUser: null,
-  box: null,
-  ethAddress: ''
+  ethAddress: '',
+  isAuth: false,
 };
 
 const userReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case SET_CURRENT_USER:
+    case SET_ETH_ADDRESS: 
       return {
         ...state,
-        currentUser: action.payload
-      };
+        ethAddress: action.payload
+      }
+      case LOG_IN: 
+        return {
+          ...state,
+          isAuth: true
+        }
+      case LOG_OUT:
+        return {
+          ...state,
+          isAuth: false
+        }
     default:
       return state;
   }

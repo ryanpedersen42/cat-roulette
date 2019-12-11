@@ -1,0 +1,32 @@
+.header {
+  height: 70px;
+  width: 100%;
+  font-family: 'Roboto Mono';
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 25px;
+  background-color: rgb(78, 53, 189);
+
+  .options {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 25px;
+    
+    .option {
+      padding: 10px 15px;
+      cursor: pointer;
+      color: white;
+    }
+  }
+
+  .logo {
+    width: 7%;
+    color: white;
+    font-size: 20px;
+    padding-left: 10px;
+    align-items: center;
+  }
+}

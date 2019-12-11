@@ -1,5 +1,7 @@
 //user consts
-export const SET_CURRENT_USER = 'SET_CURRENT_USER';
+export const SET_ETH_ADDRESS = 'SET_ETH_ADDRESS';
+export const LOG_OUT = 'LOG_OUT';
+export const LOG_IN = 'LOG_IN ';
 
 //posts consts
 export const FETCH_POSTS_START = 'FETCH_POSTS_START';
