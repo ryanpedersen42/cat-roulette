@@ -7,6 +7,9 @@ import './header-dropdown.styles.scss';
 const HeaderDropdown = ({ handleLogout, history }) => (
   <div className='header-dropdown'>
     <div>
+    <CustomButton className='dropdown-items' onClick={() => history.push('/add')}>
+      ADD IMAGE
+    </CustomButton>
     <CustomButton className='dropdown-items' onClick={() => history.push('/profile')}>
       PROFILE
     </CustomButton>

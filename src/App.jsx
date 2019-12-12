@@ -180,6 +180,7 @@ class App extends Component {
                   spaceName={dappSpace._name}
                   box={box}
                   myAddress={ethAddress}
+                  dappSpace={dappSpace}
 
                   newImageHandler={this.newImageHandler}
                   handleLogout={this.handleLogout}
