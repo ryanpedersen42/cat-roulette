@@ -26,7 +26,7 @@ class Header extends Component {
   }
 
   render(){
-    const { handleLogout, box, user } = this.props;
+    const { handleLogout, box, user, toggleImageModal } = this.props;
     const { hidden } = this.state;
     return (
       <div className='header'>
@@ -34,11 +34,13 @@ class Header extends Component {
           Cat Roulette
         </div>
         <div className='options'>
-        <a className='option' href='https://github.com/ryanpedersen42/cat-roulette'>GitHub</a>
+        {/* <a className='option' href='https://github.com/ryanpedersen42/cat-roulette'>GitHub</a> */}
+        <div className='option' onClick={toggleImageModal}>Add New Image</div>
         <ProfileHover className='option' orientation='left' showName noTheme address={user.ethAddress}><div className='option'>{user.userProfile.name}</div></ProfileHover>
-        <div className='down-arrow' onClick={this.toggleHeader}></div>
+        <div className='option'>| </div>
+        <div className='down-arrow' onClick={this.toggleHeader}>{    }</div>
         {
-          hidden ? '' : <HeaderDropdown box={box} handleLogout={handleLogout} />
+          hidden ? '' : <HeaderDropdown box={box} handleLogout={handleLogout} toggleImageModal={toggleImageModal} />
         }
         </div>
       </div>

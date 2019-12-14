@@ -4,14 +4,14 @@ import { withRouter } from 'react-router-dom';
 
 import './header-dropdown.styles.scss';
 
-const HeaderDropdown = ({ handleLogout, history }) => (
+const HeaderDropdown = ({ handleLogout, history, toggleImageModal }) => (
   <div className='header-dropdown'>
     <div>
-    <CustomButton className='dropdown-items' onClick={() => history.push('/add')}>
+    <CustomButton className='dropdown-items' onClick={toggleImageModal}>
       ADD IMAGE
     </CustomButton>
     <CustomButton className='dropdown-items' onClick={() => history.push('/profile')}>
-      PROFILE
+      MY PROFILE
     </CustomButton>
     <CustomButton className='dropdown-items' onClick={handleLogout}>
       SIGN OUT

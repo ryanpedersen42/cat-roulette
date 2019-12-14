@@ -3,15 +3,12 @@ import moment from 'moment';
 import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 
-import CustomButton from '../custom-button/custom-button';
 import { selectCurrentUserData } from '../../redux/user/user.selectors';
 
 import './add-image-modal.styles.scss';
 
-const Box = require('3box')
 const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' }) 
-
 
 const mapStateToProps = createStructuredSelector({
   user: selectCurrentUserData, 
@@ -22,7 +19,7 @@ class AddImageModal extends Component {
     super(props);
 
     this.state = {
-      imageDecription: '',
+      imageDescription: '',
       buffer: null,
       petHash: null,
       ethAddress: '',
@@ -30,7 +27,7 @@ class AddImageModal extends Component {
   }
 
   descriptionHandler = (event) => {
-    this.setState({ imageDescription: event.target.value})
+    this.setState({ imageDescription: event.target.value })
   }
 
   captureFile = (event) => {
@@ -46,30 +43,35 @@ class AddImageModal extends Component {
 
   addTo3Box = async () => {
     const { petHash, imageDescription } = this.state;
-    const { dappSpace, ethAddress } = this.props;
+    const { dappSpace, user } = this.props;
     const date = moment().subtract(10, 'days').calendar().toString()
     const randomString = Math.random().toString(36).substring(2, 6)
     const key = `${date}_${randomString}`
 
     const imageInfo = [
       {
-        ethAddress: ethAddress,
+        ethAddress: user.ethAddress,
         petHash: petHash,
         imageDecription: imageDescription,
       }
     ]
 
-    try {   
+    try { 
       await dappSpace.public.set(key, JSON.stringify(imageInfo));
     } catch(err) {
       console.log(err);
     }
   }
 
-  addToIPFS = () => {
-    ipfs.add(this.state.buffer, (error, result) => {
+  setPetHash = async (hash) => {
+    await this.setState({ petHash: hash})
+  }
+
+  addToIPFS = async () => {
+    await ipfs.add(this.state.buffer, (error, result) => {
       const petHash = result[0].hash
-      this.setState({ petHash })
+      this.setPetHash(petHash)
+
       if(error) {
         console.log(error)
         return
@@ -78,11 +80,41 @@ class AddImageModal extends Component {
   }
 
   onSubmit = (event) => {
+        const { toggleImageModal } = this.props;
     event.preventDefault()
-    this.addToIPFS()
-    this.addTo3Box()
-    this.setState({ buffer: null, imageDecription: ''})
+    ipfs.add(this.state.buffer, (error, result) => {
+      const petHash = result[0].hash
+      this.setState({ petHash })
+      if(error) {
+        console.error(error)
+        return
+      }
+      this.addTo3Box()
+      this.setState({ buffer: null, imageDecription: ''})
+      toggleImageModal()
+    })
   }
+
+  // onSubmit = async (event) => {
+  //   const { toggleImageModal } = this.props;
+  //   event.preventDefault()
+
+  //   await ipfs.add(this.state.buffer, (error, result) => {
+  //     const petHash = result[0].hash
+  //     this.setState({ petHash })
+  //     if(error) {
+  //       console.error(error)
+  //       return
+  //     }
+      
+
+  //   // await this.addToIPFS()
+  //   // await console.log(this.state.petHash)
+  //   this.addTo3Box()
+  //   this.setState({ buffer: null, imageDecription: ''})
+  //   toggleImageModal()
+  //   }
+  // }
 
 render() {
   const { toggleImageModal, modalVisible } = this.props;
@@ -91,10 +123,17 @@ render() {
     return null
   }
   return (
-  <div className='image-modal' onClick={toggleImageModal}>
+    <div className='image-modal'>
+      <div className='modal-close' onClick={toggleImageModal}>&times;</div>
       <h1>Add a new pic</h1>
       <form onSubmit={this.onSubmit} className='image-form' >
         <input className='form-field' type='file' onChange={this.captureFile} />
+        <input 
+         type='text'
+         className='form-input' 
+         onChange={this.descriptionHandler} 
+         placeholder='Image description' 
+         />
         <input className='custom-button' type='submit' />
       </form>
     </div>

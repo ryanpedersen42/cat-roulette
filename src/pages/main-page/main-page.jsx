@@ -22,9 +22,8 @@ class MainPage extends Component {
     }
   }
 
-  toggleImageModal = (event) => {
+  toggleImageModal = () => {
     const { modalVisible } = this.state;
-    event.preventDefault()
 
     this.setState({ modalVisible: !modalVisible})
   }
@@ -38,6 +37,7 @@ class MainPage extends Component {
     <Header
       box={box}
       handleLogout={handleLogout}
+      toggleImageModal={this.toggleImageModal}
      />
      {
        modalVisible ? (
@@ -46,7 +46,6 @@ class MainPage extends Component {
        :
        (
          <>
-          <button onClick={this.toggleImageModal}>toggle it</button>
           <div className="main-page">
           <div className='roulette-button'>
           <CustomButton onClick={newImageHandler}>New Image</CustomButton>
