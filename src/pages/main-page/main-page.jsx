@@ -24,12 +24,12 @@ class MainPage extends Component {
 
   toggleImageModal = () => {
     const { modalVisible } = this.state;
-
+    // console.log(this.props.currentResult)
     this.setState({ modalVisible: !modalVisible})
   }
 
   render() {
-    const { ethAddress, adminEthAddress, handleLogout, spaceName, box, newImageHandler, currentPetHash, dappSpace } = this.props;
+    const { ethAddress, adminEthAddress, handleLogout, spaceName, box, newImageHandler, currentPetHash, dappSpace, currentResult } = this.props;
     const { modalVisible } = this.state
 
   return (
@@ -48,7 +48,7 @@ class MainPage extends Component {
          <>
           <div className="main-page">
           <div className='roulette-button'>
-          <CustomButton onClick={newImageHandler}>New Image</CustomButton>
+          <CustomButton onClick={newImageHandler}>Spin</CustomButton>
           </div>
           <div className="image-container">
             <img 
@@ -56,6 +56,9 @@ class MainPage extends Component {
             src={`https://ipfs.infura.io/ipfs/${currentPetHash}`} 
             alt='current'
             />
+            <p>{currentResult.imageDescription}</p>
+            <p>&nbsp;</p>
+          </div>
             {box &&
             <CommentComponent
               ethAddress={ethAddress}
@@ -65,8 +68,6 @@ class MainPage extends Component {
               myAddress={ethAddress}
             />
           }
-            <p>&nbsp;</p>
-          </div>
         </div>
     </>
        )

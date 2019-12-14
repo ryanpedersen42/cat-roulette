@@ -52,7 +52,7 @@ class AddImageModal extends Component {
       {
         ethAddress: user.ethAddress,
         petHash: petHash,
-        imageDecription: imageDescription,
+        imageDescription: imageDescription,
       }
     ]
 

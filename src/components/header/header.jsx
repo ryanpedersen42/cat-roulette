@@ -34,7 +34,6 @@ class Header extends Component {
           Cat Roulette
         </div>
         <div className='options'>
-        {/* <a className='option' href='https://github.com/ryanpedersen42/cat-roulette'>GitHub</a> */}
         <div className='option' onClick={toggleImageModal}>Add New Image</div>
         <ProfileHover className='option' orientation='left' showName noTheme address={user.ethAddress}><div className='option'>{user.userProfile.name}</div></ProfileHover>
         <div className='option'>| </div>

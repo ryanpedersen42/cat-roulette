@@ -90,7 +90,6 @@ class App extends Component {
 
   newImageHandler = async () => {
     const { setCurrentPetHash, history } = this.props;
-
     const { ipfsPosts, dappSpace } = this.state;
   
     function getRandomInt(min, max) {
@@ -101,12 +100,13 @@ class App extends Component {
     const randomKeyNumber = getRandomInt(0, ipfsPosts.length - 1)
     
     try {
-      const testThis = await dappSpace.public.get(ipfsPosts[randomKeyNumber])
-      const parsedResult = JSON.parse(testThis)
+      const currentPost = await dappSpace.public.get(ipfsPosts[randomKeyNumber])
+      const parsedResult = JSON.parse(currentPost)
       const currentResult = parsedResult[0]
       await this.setState({ currentResult, petHash: currentResult.petHash })
       await setCurrentPetHash(currentResult.petHash)
-
+      await console.log('here', currentResult)
+      await console.log('state', this.state.currentResult)
       //workaround to get the component to reload
       history.push('/')
       history.push('/main')
@@ -144,7 +144,7 @@ class App extends Component {
     try {
       const dappSpaceData = await dappSpace.public.all()
       let ipfsKeyArray = []
-      Object.keys(dappSpaceData).forEach(function (values) {
+      Object.keys(dappSpaceData).forEach((values) => {
         if (values.length === 15) {
           ipfsKeyArray.push(values)
         }
@@ -156,7 +156,7 @@ class App extends Component {
   }
 
   render() {
-    const { ethAddress, box, dappSpace, adminEthAddress, isAppReady } = this.state;
+    const { ethAddress, box, dappSpace, adminEthAddress, isAppReady, currentResult } = this.state;
     return (
 
       <div className="App">
@@ -181,6 +181,7 @@ class App extends Component {
                   box={box}
                   myAddress={ethAddress}
                   dappSpace={dappSpace}
+                  currentResult={currentResult}
 
                   newImageHandler={this.newImageHandler}
                   handleLogout={this.handleLogout}
