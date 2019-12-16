@@ -3,6 +3,7 @@ import Web3 from 'web3';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
+import ReactLoading from 'react-loading';
 
 import MainPage from './pages/main-page/main-page';
 import AuthPage from './pages/auth-page/auth-page';
@@ -39,17 +40,10 @@ class App extends Component {
 
     this.state = {
       petHash: '',
-      contract: null,
-      web3: null,
-      adminEthAddress: '0x55c4eb985536f74f354dbaf7dd2d8891e9373504',
-      ethAddress: '',
       currentResult: {},
-      box: null,
-      userProfile: null,
-      dappSpace: '',
-      imageDescription: '',
       ipfsPosts: [],
       isAppReady: false,
+      isLoaded: false,
     }
   }
 
@@ -65,8 +59,8 @@ class App extends Component {
   }
 
   async componentDidMount() {
-    const { box } = this.state;
-    const { history } = this.props;
+    const { history, user } = this.props;
+    const box = user.testBox;
 
     if (!box) history.push('/');
     this.setState({ isAppReady: true });
@@ -90,8 +84,10 @@ class App extends Component {
   }
 
   newImageHandler = async () => {
-    const { setCurrentPetHash, history } = this.props;
-    const { ipfsPosts, dappSpace } = this.state;
+    const { setCurrentPetHash, history, user } = this.props;
+    const { ipfsPosts } = this.state;
+
+    const dappSpace = user.dappSpace;
   
     function getRandomInt(min, max) {
         min = Math.ceil(min);
@@ -124,11 +120,11 @@ class App extends Component {
     const dappSpace = await box.openSpace('catSpace');
     const userProfile = await Box.getProfile(user.ethAddress)
 
-    await this.setState({ box, dappSpace });
     await setUserProfile(userProfile)
     await logUserIn()
     await setDappTest(dappSpace)
     await setBoxTest(box)
+    await this.setState({ isLoaded: true })
     history.push('/main')
   }
 
@@ -157,10 +153,15 @@ class App extends Component {
   }
 
   render() {
-    const { dappSpace, isAppReady, currentResult } = this.state;
+    const { dappSpace, isAppReady, currentResult, isLoaded } = this.state;
     return (
       <div className="App">
-        {isAppReady && (<React.Fragment>
+      { !isLoaded ?     <ReactLoading type={'bars'} color={'black'} height={'10%'} width={'20%'} />
+
+      :
+      (
+
+        isAppReady && (<React.Fragment>
           <Switch>
             <Route
               exact
@@ -191,10 +192,12 @@ class App extends Component {
                 )}
                 />
           </Switch>
-        </React.Fragment>)}
+        </React.Fragment>)
+      )}
       </div>
 
     );
+
   }
 }
 
