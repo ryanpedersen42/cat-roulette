@@ -16,14 +16,13 @@ const ProfilePage = ({ box, dappSpace, user, handleLogout }) => (
   <Header       
     box={box}
     handleLogout={handleLogout}
-    // toggleImageModal={this.toggleImageModal} 
   />
   <h1>My Profile Page</h1>
   <div className='profile-page'>
       <div className='profile-edit'>
         <EditProfile
-            box={box}
-            space={dappSpace}
+            box={user.box}
+            space={user.dappSpace}
             currentUserAddr={user.ethAddress}
             currentUser3BoxProfile={user.userProfile}
         />

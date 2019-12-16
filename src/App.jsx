@@ -13,6 +13,7 @@ import { setCurrentPetHash } from './redux/posts/posts.actions';
 import { selectCurrentPetHash } from './redux/posts/posts.selectors';
 
 import { setEthAddress, logUserIn, setUserProfile, setBoxTest, setDappTest, logUserOut } from './redux/user/user.actions';
+import { startLoading, endLoading } from './redux/ui/ui.actions';
 import { selectCurrentUserData } from './redux/user/user.selectors';
 
 import './App.css';
@@ -26,7 +27,9 @@ const mapDispatchToProps = dispatch => ({
   logUserOut: () => dispatch(logUserOut()),
   setUserProfile: user => dispatch(setUserProfile(user)),
   setBoxTest: box => dispatch(setBoxTest(box)),
-  setDappTest: dapp => dispatch(setDappTest(dapp))
+  setDappTest: dapp => dispatch(setDappTest(dapp)),
+  startLoading: () => dispatch(startLoading()),
+  endLoading: () => dispatch(endLoading())
 });
 
 const mapStateToProps = createStructuredSelector({
@@ -48,11 +51,14 @@ class App extends Component {
   }
 
   async componentWillMount() {
+    const { startLoading, endLoading } = this.props;
     try {
+      await startLoading()
       await this.loadWeb3()
       await this.auth3Box()
       await this.fetchPosts()
       await this.newImageHandler()
+      await endLoading()
     } catch(err) {
       console.error(err)
     }
@@ -156,12 +162,7 @@ class App extends Component {
     const { dappSpace, isAppReady, currentResult, isLoaded } = this.state;
     return (
       <div className="App">
-      { !isLoaded ?     <ReactLoading type={'bars'} color={'black'} height={'10%'} width={'20%'} />
-
-      :
-      (
-
-        isAppReady && (<React.Fragment>
+      {isAppReady && (<React.Fragment>
           <Switch>
             <Route
               exact
@@ -192,10 +193,8 @@ class App extends Component {
                 )}
                 />
           </Switch>
-        </React.Fragment>)
-      )}
+        </React.Fragment>)}
       </div>
-
     );
 
   }
