@@ -11,7 +11,7 @@ import ProfilePage from './pages/profile-page/profile-page';
 import { setCurrentPetHash } from './redux/posts/posts.actions';
 import { selectCurrentPetHash } from './redux/posts/posts.selectors';
 
-import { setEthAddress, logUserIn, setUserProfile } from './redux/user/user.actions';
+import { setEthAddress, logUserIn, setUserProfile, setBoxTest, setDappTest, logUserOut } from './redux/user/user.actions';
 import { selectCurrentUserData } from './redux/user/user.selectors';
 
 import './App.css';
@@ -22,7 +22,10 @@ const mapDispatchToProps = dispatch => ({
   setCurrentPetHash: user => dispatch(setCurrentPetHash(user)),
   setEthAddress: user => dispatch(setEthAddress(user)),
   logUserIn: () => dispatch(logUserIn()),
-  setUserProfile: user => dispatch(setUserProfile(user))
+  logUserOut: () => dispatch(logUserOut()),
+  setUserProfile: user => dispatch(setUserProfile(user)),
+  setBoxTest: box => dispatch(setBoxTest(box)),
+  setDappTest: dapp => dispatch(setDappTest(dapp))
 });
 
 const mapStateToProps = createStructuredSelector({
@@ -35,8 +38,6 @@ class App extends Component {
     super(props);
 
     this.state = {
-      buffer: null,
-      account: null,
       petHash: '',
       contract: null,
       web3: null,
@@ -105,9 +106,8 @@ class App extends Component {
       const currentResult = parsedResult[0]
       await this.setState({ currentResult, petHash: currentResult.petHash })
       await setCurrentPetHash(currentResult.petHash)
-      await console.log('here', currentResult)
-      await console.log('state', this.state.currentResult)
-      //workaround to get the component to reload
+
+      //re-render component
       history.push('/')
       history.push('/main')
     } catch(err) {
@@ -115,16 +115,8 @@ class App extends Component {
     }
   }
 
-  handleLogout = async () => {
-    const { history } = this.props;
-    const { box } = this.state;
-
-    await box.logout();
-    history.push('/');
-  }
-
   auth3Box = async () => {
-    const { user, logUserIn, history, setUserProfile } = this.props;
+    const { user, logUserIn, history, setUserProfile, setBoxTest, setDappTest } = this.props;
 
     const box = await Box.openBox(user.ethAddress, window.ethereum, {});
     await new Promise((resolve, reject) => box.onSyncDone(resolve));
@@ -135,8 +127,17 @@ class App extends Component {
     await this.setState({ box, dappSpace });
     await setUserProfile(userProfile)
     await logUserIn()
+    await setDappTest(dappSpace)
+    await setBoxTest(box)
     history.push('/main')
+  }
 
+  handleLogout = async () => {
+    const { history, user } = this.props;
+    const box = user.testBox;
+
+    await box.logout();
+    history.push('/');
   }
 
   fetchPosts = async () => {
@@ -156,9 +157,8 @@ class App extends Component {
   }
 
   render() {
-    const { ethAddress, box, dappSpace, adminEthAddress, isAppReady, currentResult } = this.state;
+    const { dappSpace, isAppReady, currentResult } = this.state;
     return (
-
       <div className="App">
         {isAppReady && (<React.Fragment>
           <Switch>
@@ -167,7 +167,6 @@ class App extends Component {
               path='/'
               render={() => <AuthPage 
                 auth3box={this.auth3Box}
-                box={box}
                />}
             />
             <Route
@@ -175,12 +174,6 @@ class App extends Component {
               path='/main'
               render={() => (
                 <MainPage
-                  ethAddress={ethAddress}
-                  adminEthAddress={adminEthAddress}
-                  spaceName={dappSpace._name}
-                  box={box}
-                  myAddress={ethAddress}
-                  dappSpace={dappSpace}
                   currentResult={currentResult}
 
                   newImageHandler={this.newImageHandler}
@@ -194,7 +187,6 @@ class App extends Component {
               render={() => (
                 <ProfilePage
                   dappSpace={dappSpace}
-                  box={box}
                 />
                 )}
                 />

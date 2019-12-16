@@ -1,7 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectCurrentUserData } from '../../redux/user/user.selectors';
+import { selectCurrentUI } from '../../redux/ui/ui.selectors';
+import { toggleDropdown, toggleAddImage } from '../../redux/ui/ui.actions';
+import { withRouter } from 'react-router-dom';
 import ProfileHover from 'profile-hover';
 
 import HeaderDropdown from '../header-dropdown/header-dropdown';
@@ -9,42 +12,31 @@ import HeaderDropdown from '../header-dropdown/header-dropdown';
 import './header.styles.scss';
 
 const mapStateToProps = createStructuredSelector({
-  user: selectCurrentUserData, 
+  user: selectCurrentUserData,
+  ui: selectCurrentUI
 })
 
-class Header extends Component {
-  constructor(props){
-    super(props);
+const mapDispatchToProps = dispatch => ({
+  toggleDropdown: () => dispatch(toggleDropdown()),
+  toggleAddImage: () => dispatch(toggleAddImage()),
+});
 
-    this.state = {
-      hidden: true
-    }
+const Header = ({ handleLogout, user, toggleImageModal, ui, toggleDropdown, toggleAddImage, history }) => (
+  <div className='header'>
+  <div className='logo' onClick={() => history.push('/main')}>
+    Cat Roulette
+  </div>
+  <div className='options'>
+  <div className='option' onClick={toggleAddImage}>Add New Image</div>
+  <ProfileHover className='option' orientation='left' showName noTheme address={user.ethAddress}><div className='option'>{user.userProfile.name}</div></ProfileHover>
+  <div className='option'>| </div>
+  <div className='down-arrow' onMouseEnter={toggleDropdown}
+   onClick={toggleDropdown}>{    }</div>
+  {
+    ui.dropdownOpen ? <HeaderDropdown handleLogout={handleLogout} toggleImageModal={toggleImageModal} /> : ''
   }
+  </div>
+</div>
+)
 
-  toggleHeader = () => {
-    this.setState({ hidden: !this.state.hidden})
-  }
-
-  render(){
-    const { handleLogout, box, user, toggleImageModal } = this.props;
-    const { hidden } = this.state;
-    return (
-      <div className='header'>
-        <div className='logo'>
-          Cat Roulette
-        </div>
-        <div className='options'>
-        <div className='option' onClick={toggleImageModal}>Add New Image</div>
-        <ProfileHover className='option' orientation='left' showName noTheme address={user.ethAddress}><div className='option'>{user.userProfile.name}</div></ProfileHover>
-        <div className='option'>| </div>
-        <div className='down-arrow' onClick={this.toggleHeader}>{    }</div>
-        {
-          hidden ? '' : <HeaderDropdown box={box} handleLogout={handleLogout} toggleImageModal={toggleImageModal} />
-        }
-        </div>
-      </div>
-    )
-  }
-}
-
-export default connect(mapStateToProps)(Header);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));
