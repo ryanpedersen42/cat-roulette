@@ -16,6 +16,7 @@ const rootReducer = combineReducers({
   user: userReducer,
   petHash: postsReducer,
   ui: uiReducer,
+  posts: postsReducer
 });
 
 export default persistReducer(persistConfig, rootReducer);

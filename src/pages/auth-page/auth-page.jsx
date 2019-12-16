@@ -17,7 +17,7 @@ const AuthPage = ({ auth3box, ui }) => (
     <AuthHeader />
     {ui.isLoading ? (
       <div className="auth-page">
-        <h3>Signing in...</h3>
+        <h3>Hold tight. We are confirming web3 and signing in with 3Box...</h3>
         <ReactLoading
           type={"bars"}
           color={"black"}

@@ -3,16 +3,15 @@ import Web3 from 'web3';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
-import ReactLoading from 'react-loading';
 
 import MainPage from './pages/main-page/main-page';
 import AuthPage from './pages/auth-page/auth-page';
 import ProfilePage from './pages/profile-page/profile-page';
 
-import { setCurrentPetHash } from './redux/posts/posts.actions';
-import { selectCurrentPetHash } from './redux/posts/posts.selectors';
+import { setCurrentResult, setCurrentIPFS } from './redux/posts/posts.actions';
+import { selectCurrentPosts } from './redux/posts/posts.selectors';
 
-import { setEthAddress, logUserIn, setUserProfile, setBoxTest, setDappTest, logUserOut } from './redux/user/user.actions';
+import { setEthAddress, logUserIn, setUserProfile, setBox, setDappSpace, logUserOut } from './redux/user/user.actions';
 import { startLoading, endLoading } from './redux/ui/ui.actions';
 import { selectCurrentUserData } from './redux/user/user.selectors';
 
@@ -21,19 +20,20 @@ import './App.css';
 const Box = require('3box')
 
 const mapDispatchToProps = dispatch => ({
-  setCurrentPetHash: user => dispatch(setCurrentPetHash(user)),
   setEthAddress: user => dispatch(setEthAddress(user)),
   logUserIn: () => dispatch(logUserIn()),
   logUserOut: () => dispatch(logUserOut()),
   setUserProfile: user => dispatch(setUserProfile(user)),
-  setBoxTest: box => dispatch(setBoxTest(box)),
-  setDappTest: dapp => dispatch(setDappTest(dapp)),
+  setBox: box => dispatch(setBox(box)),
+  setDappSpace: dapp => dispatch(setDappSpace(dapp)),
   startLoading: () => dispatch(startLoading()),
-  endLoading: () => dispatch(endLoading())
+  endLoading: () => dispatch(endLoading()),
+  setCurrentResult: currentResult => dispatch(setCurrentResult(currentResult)),
+  setCurrentIPFS: currentIPFS => dispatch(setCurrentIPFS(currentIPFS))
 });
 
 const mapStateToProps = createStructuredSelector({
-  currentPetHash: selectCurrentPetHash,
+  posts: selectCurrentPosts,
   user: selectCurrentUserData, 
 })
 
@@ -90,7 +90,7 @@ class App extends Component {
   }
 
   newImageHandler = async () => {
-    const { setCurrentPetHash, history, user } = this.props;
+    const { history, user, setCurrentResult } = this.props;
     const { ipfsPosts } = this.state;
 
     const dappSpace = user.dappSpace;
@@ -107,7 +107,7 @@ class App extends Component {
       const parsedResult = JSON.parse(currentPost)
       const currentResult = parsedResult[0]
       await this.setState({ currentResult, petHash: currentResult.petHash })
-      await setCurrentPetHash(currentResult.petHash)
+      await setCurrentResult(currentResult)
 
       //re-render component
       history.push('/')
@@ -118,7 +118,7 @@ class App extends Component {
   }
 
   auth3Box = async () => {
-    const { user, logUserIn, history, setUserProfile, setBoxTest, setDappTest } = this.props;
+    const { user, logUserIn, history, setUserProfile, setBox, setDappSpace } = this.props;
 
     const box = await Box.openBox(user.ethAddress, window.ethereum, {});
     await new Promise((resolve, reject) => box.onSyncDone(resolve));
@@ -128,8 +128,8 @@ class App extends Component {
 
     await setUserProfile(userProfile)
     await logUserIn()
-    await setDappTest(dappSpace)
-    await setBoxTest(box)
+    await setDappSpace(dappSpace)
+    await setBox(box)
     await this.setState({ isLoaded: true })
     history.push('/main')
   }
@@ -143,7 +143,8 @@ class App extends Component {
   }
 
   fetchPosts = async () => {
-    const { dappSpace } = this.state;
+    const { user, setCurrentIPFS } = this.props;
+    const dappSpace = user.dappSpace;
     try {
       const dappSpaceData = await dappSpace.public.all()
       let ipfsKeyArray = []
@@ -152,14 +153,15 @@ class App extends Component {
           ipfsKeyArray.push(values)
         }
       });
+      await setCurrentIPFS(ipfsKeyArray)
       this.setState({ ipfsPosts: ipfsKeyArray})
     } catch(err) {
-      console.error(err)
+      console.error('error hereee', err)
     }
   }
 
   render() {
-    const { dappSpace, isAppReady, currentResult, isLoaded } = this.state;
+    const { isAppReady } = this.state;
     return (
       <div className="App">
       {isAppReady && (<React.Fragment>
@@ -176,7 +178,7 @@ class App extends Component {
               path='/main'
               render={() => (
                 <MainPage
-                  currentResult={currentResult}
+                  // currentResult={currentResult}
 
                   newImageHandler={this.newImageHandler}
                   handleLogout={this.handleLogout}
@@ -188,7 +190,7 @@ class App extends Component {
               path='/profile'
               render={() => (
                 <ProfilePage
-                  dappSpace={dappSpace}
+                  // dappSpace={dappSpace}
                 />
                 )}
                 />

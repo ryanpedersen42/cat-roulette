@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
 
-const selectPetHash = state => state.petHash;
+const selectPosts = state => state.posts;
 
-export const selectCurrentPetHash = createSelector(
-  [selectPetHash],
-  (petHash) => petHash.currentPetHash
+export const selectCurrentPosts = createSelector(
+  [selectPosts],
+  (posts) => posts
 );

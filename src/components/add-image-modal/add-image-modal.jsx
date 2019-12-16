@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
-import LoadingOverlay from 'react-loading-overlay';
+import ReactLoading from "react-loading";
 
 import { selectCurrentUI } from '../../redux/ui/ui.selectors';
 import { selectCurrentUserData } from '../../redux/user/user.selectors';
-import { toggleAddImage } from '../../redux/ui/ui.actions';
+import { toggleAddImage, startLoading, endLoading } from '../../redux/ui/ui.actions';
 
 import './add-image-modal.styles.scss';
 
@@ -19,7 +19,9 @@ const mapStateToProps = createStructuredSelector({
 })
 
 const mapDispatchToProps = dispatch => ({
-  toggleAddImage: () => dispatch(toggleAddImage())
+  toggleAddImage: () => dispatch(toggleAddImage()),
+  startLoading: () => dispatch(startLoading()),
+  endLoading: () => dispatch(endLoading())
 });
 
 class AddImageModal extends Component {
@@ -30,8 +32,6 @@ class AddImageModal extends Component {
       imageDescription: '',
       buffer: null,
       petHash: null,
-      ethAddress: '',
-      loadingOverlay: false,
     }
   }
 
@@ -53,7 +53,7 @@ class AddImageModal extends Component {
   addTo3Box = async () => {
     const { petHash, imageDescription } = this.state;
     const { user } = this.props;
-    const myDappSpace = user.testDappSpace
+    const myDappSpace = user.dappSpace
     const date = moment().subtract(10, 'days').calendar().toString()
     const randomString = Math.random().toString(36).substring(2, 6)
     const key = `${date}_${randomString}`
@@ -72,12 +72,7 @@ class AddImageModal extends Component {
       console.log(err);
     }
   }
-
-  toggleLoadingOverlay = () => {
-    const { loadingOverlay } = this.state;
-    this.setState({ loadingOverlay: !loadingOverlay})
-  }
-
+  
   setPetHash = async (hash) => {
     await this.setState({ petHash: hash})
   }
@@ -95,8 +90,10 @@ class AddImageModal extends Component {
   }
 
   onSubmit = (event) => {
-    const { toggleAddImage } = this.props;
+    const { toggleAddImage, startLoading, endLoading } = this.props;
     event.preventDefault()
+
+    startLoading()
     ipfs.add(this.state.buffer, (error, result) => {
       const petHash = result[0].hash
       this.setState({ petHash })
@@ -106,20 +103,30 @@ class AddImageModal extends Component {
       }
       this.addTo3Box()
       this.setState({ buffer: null, imageDecription: ''})
+      endLoading()
       toggleAddImage()
     })
   }
 
 render() {
-  const { toggleAddImage } = this.props;
+  const { toggleAddImage, ui } = this.props;
 
   return (
-    <LoadingOverlay
-      active={this.state.loadingOverlay}
-      spinner
-      text='Loading your content...'
-    >
     <div className='image-modal'>
+    {
+      ui.isLoading ?  
+      (     
+      <div className='image-form'>
+      <h3>Submitting post...</h3>
+        <ReactLoading
+          type={"bars"}
+          color={"black"}
+          height={"10%"}
+          width={"15%"}
+        />
+      </div>
+      ) : (
+      <>
       <div className='modal-close' onClick={toggleAddImage}>&times;</div>
       <h1>Add a new pic</h1>
       <form onSubmit={this.onSubmit} className='image-form' >
@@ -132,8 +139,10 @@ render() {
          />
         <input className='custom-button' type='submit' />
       </form>
+      </>
+      )
+    }
     </div>
-    </LoadingOverlay>
   )
 }
 }

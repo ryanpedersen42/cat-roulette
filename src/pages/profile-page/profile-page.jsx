@@ -11,10 +11,10 @@ const mapStateToProps = createStructuredSelector({
   user: selectCurrentUserData, 
 })
 
-const ProfilePage = ({ box, dappSpace, user, handleLogout }) => (
+const ProfilePage = ({ user, handleLogout }) => (
   <>
   <Header       
-    box={box}
+    box={user.box}
     handleLogout={handleLogout}
   />
   <h1>My Profile Page</h1>

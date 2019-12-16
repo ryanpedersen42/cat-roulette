@@ -18,12 +18,12 @@ export const setUserProfile = userProfile => ({
   payload: userProfile
 })
 
-export const setBoxTest = box => ({
+export const setBox = box => ({
   type: SET_BOX,
   payload: box
 })
 
-export const setDappTest = dapp => ({
+export const setDappSpace = dapp => ({
   type: SET_DAPP,
   payload: dapp
 })

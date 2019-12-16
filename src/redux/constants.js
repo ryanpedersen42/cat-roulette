@@ -10,7 +10,8 @@ export const SET_DAPP = 'SET_DAPP';
 export const FETCH_POSTS_START = 'FETCH_POSTS_START';
 export const FETCH_POSTS_SUCCESS = 'FETCH_POSTS_SUCCESS';
 export const FETCH_POSTS_FAIL = 'FETCH_POSTS_FAIL';
-
+export const SET_CURRENT_RESULT = 'SET_CURRENT_RESULT';
+export const SET_IPFS_POSTS = 'SET_IPFS_POSTS';
 export const SET_PET_HASH = 'SET_PET_HASH';
 
 //ui
