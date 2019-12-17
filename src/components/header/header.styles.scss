@@ -4,6 +4,7 @@
   font-family: 'Roboto Mono';
   display: flex;
   justify-content: space-between;
+  position: relative;
   margin-bottom: 25px;
   background-color: rgb(78, 53, 189);
 
@@ -35,8 +36,9 @@
   .logo {
     width: 7%;
     color: white;
-    font-size: 20px;
+    display: flex;
+    font-size: 15px;
+    cursor: pointer;
     padding-left: 10px;
-    align-items: center;
   }
 }
