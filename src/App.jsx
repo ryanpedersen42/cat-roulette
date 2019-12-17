@@ -123,7 +123,7 @@ class App extends Component {
     const box = await Box.openBox(user.ethAddress, window.ethereum, {});
     await new Promise((resolve, reject) => box.onSyncDone(resolve));
 
-    const dappSpace = await box.openSpace('catSpace');
+    const dappSpace = await box.openSpace('catRoulette');
     const userProfile = await Box.getProfile(user.ethAddress)
 
     await setUserProfile(userProfile)
@@ -178,8 +178,6 @@ class App extends Component {
               path='/main'
               render={() => (
                 <MainPage
-                  // currentResult={currentResult}
-
                   newImageHandler={this.newImageHandler}
                   handleLogout={this.handleLogout}
                 />
@@ -190,7 +188,6 @@ class App extends Component {
               path='/profile'
               render={() => (
                 <ProfilePage
-                  // dappSpace={dappSpace}
                 />
                 )}
                 />
