@@ -32,6 +32,7 @@ class AddImageModal extends Component {
       imageDescription: '',
       buffer: null,
       petHash: null,
+      errorMessage: false
     }
   }
 
@@ -53,7 +54,7 @@ class AddImageModal extends Component {
   addTo3Box = async () => {
     const { petHash, imageDescription } = this.state;
     const { user } = this.props;
-    const myDappSpace = user.dappSpace
+    const myDappSpace = user.dappSpace;
     const date = moment().subtract(10, 'days').calendar().toString()
     const randomString = Math.random().toString(36).substring(2, 6)
     const key = `${date}_${randomString}`
@@ -72,28 +73,27 @@ class AddImageModal extends Component {
       console.log(err);
     }
   }
+
+  showAlert = () => {
+    this.setState({ errorMessage: true})
   
-  setPetHash = async (hash) => {
-    await this.setState({ petHash: hash})
-  }
-
-  addToIPFS = async () => {
-    await ipfs.add(this.state.buffer, (error, result) => {
-      const petHash = result[0].hash
-      this.setPetHash(petHash)
-
-      if(error) {
-        console.log(error)
-        return
-      }
-    })
+    setTimeout(() => {
+      this.setState({ errorMessage: false });
+    }, 1000);
   }
 
   onSubmit = (event) => {
     const { toggleAddImage, startLoading, endLoading } = this.props;
+    const { imageDescription, buffer } = this.state;
     event.preventDefault()
 
+    if (!buffer || imageDescription.length < 1) {
+      this.showAlert()
+      return 
+    }
+
     startLoading()
+    //add to IPFS
     ipfs.add(this.state.buffer, (error, result) => {
       const petHash = result[0].hash
       this.setState({ petHash })
@@ -101,6 +101,7 @@ class AddImageModal extends Component {
         console.error(error)
         return
       }
+      //add to 3Box
       this.addTo3Box()
       this.setState({ buffer: null, imageDecription: ''})
       endLoading()
@@ -138,6 +139,9 @@ render() {
          placeholder='Image description' 
          />
         <input className='custom-button' type='submit' />
+        {
+          this.state.errorMessage && <p>complete the whole input form please</p>
+        }
       </form>
       </>
       )

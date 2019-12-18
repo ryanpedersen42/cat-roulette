@@ -14,7 +14,6 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   user: userReducer,
-  petHash: postsReducer,
   ui: uiReducer,
   posts: postsReducer
 });

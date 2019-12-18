@@ -42,9 +42,6 @@ class App extends Component {
     super(props);
 
     this.state = {
-      petHash: '',
-      currentResult: {},
-      ipfsPosts: [],
       isAppReady: false,
       isLoaded: false,
     }
@@ -72,7 +69,7 @@ class App extends Component {
     this.setState({ isAppReady: true });
   }
 
-  async loadWeb3() {
+  loadWeb3 = async () => {
     const { setEthAddress } = this.props;
 
     if (window.ethereum) {
@@ -90,9 +87,9 @@ class App extends Component {
   }
 
   newImageHandler = async () => {
-    const { history, user, setCurrentResult } = this.props;
-    const { ipfsPosts } = this.state;
+    const { history, user, setCurrentResult, posts } = this.props;
 
+    const ipfsPosts = posts.ipfsPosts
     const dappSpace = user.dappSpace;
   
     function getRandomInt(min, max) {
@@ -106,7 +103,6 @@ class App extends Component {
       const currentPost = await dappSpace.public.get(ipfsPosts[randomKeyNumber])
       const parsedResult = JSON.parse(currentPost)
       const currentResult = parsedResult[0]
-      await this.setState({ currentResult, petHash: currentResult.petHash })
       await setCurrentResult(currentResult)
 
       //re-render component
@@ -136,7 +132,7 @@ class App extends Component {
 
   handleLogout = async () => {
     const { history, user } = this.props;
-    const box = user.testBox;
+    const box = user.box;
 
     await box.logout();
     history.push('/');
@@ -153,10 +149,10 @@ class App extends Component {
           ipfsKeyArray.push(values)
         }
       });
+      console.log(dappSpaceData)
       await setCurrentIPFS(ipfsKeyArray)
-      this.setState({ ipfsPosts: ipfsKeyArray})
     } catch(err) {
-      console.error('error hereee', err)
+      console.error(err)
     }
   }
 
