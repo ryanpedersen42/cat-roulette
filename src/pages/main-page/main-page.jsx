@@ -22,7 +22,7 @@ const mapDispatchToProps = dispatch => ({
   toggleAddImage: () => dispatch(toggleAddImage())
 });
 
-const MainPage = ({ handleLogout, newImageHandler, currentResult, user, ui, posts }) => (
+const MainPage = ({ handleLogout, newImageHandler, currentPost, box, dappSpace, user, ui, posts }) => (
   <>
     <Header handleLogout={handleLogout} />
     {ui.addImageOpen ? (
@@ -42,7 +42,7 @@ const MainPage = ({ handleLogout, newImageHandler, currentResult, user, ui, post
             <p>{posts.currentResult.imageDescription}</p>
             <p>&nbsp;</p>
           </div>
-          {user.box && <CommentComponent />}
+          {user.box && posts.currentResult && <CommentComponent currentPost={currentPost} dappSpace={dappSpace} box={box} />}
         </div>
       </>
     )}

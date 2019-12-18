@@ -44,6 +44,9 @@ class App extends Component {
     this.state = {
       isAppReady: false,
       isLoaded: false,
+      currentPost: null,
+      box: {},
+      dappSpace: null,
     }
   }
 
@@ -101,6 +104,7 @@ class App extends Component {
     
     try {
       const currentPost = await dappSpace.public.get(ipfsPosts[randomKeyNumber])
+      await this.setState({ currentPost })
       const parsedResult = JSON.parse(currentPost)
       const currentResult = parsedResult[0]
       await setCurrentResult(currentResult)
@@ -126,7 +130,7 @@ class App extends Component {
     await logUserIn()
     await setDappSpace(dappSpace)
     await setBox(box)
-    await this.setState({ isLoaded: true })
+    await this.setState({ isLoaded: true, dappSpace, box })
     history.push('/main')
   }
 
@@ -157,7 +161,7 @@ class App extends Component {
   }
 
   render() {
-    const { isAppReady } = this.state;
+    const { isAppReady, currentPost, dappSpace, box } = this.state;
     return (
       <div className="App">
       {isAppReady && (<React.Fragment>
@@ -176,6 +180,7 @@ class App extends Component {
                 <MainPage
                   newImageHandler={this.newImageHandler}
                   handleLogout={this.handleLogout}
+                  currentPost={currentPost} dappSpace={dappSpace} box={box}
                 />
               )}
             />

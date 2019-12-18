@@ -12,15 +12,17 @@ const mapStateToProps = createStructuredSelector({
   posts: selectCurrentPosts,
 })
 
-const CommentComponent = ({ user, posts }) => (
+const CommentComponent = ({ user, posts, currentPost, box, dappSpace }) => (
   <div className='comment-component'>
     <ThreeBoxComments 
-        spaceName={user.dappSpace._name}
-        threadName={posts.currentResult.petHash}
+        spaceName='catRoulette'
+        threadName={currentPost}
         adminEthAddr='0x55c4eb985536f74f354dbaf7dd2d8891e9373504'
+        members={false}
+        showCommentCount={15}
 
-        box={user.box}
-        currentUserAddr={user.ethAddress}
+        box={box}
+        currentUserAddr='0x55c4eb985536f74f354dbaf7dd2d8891e9373504'
     />
   </div>
 );
