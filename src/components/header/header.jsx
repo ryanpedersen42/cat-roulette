@@ -27,7 +27,7 @@ const Header = ({ handleLogout, user, toggleImageModal, ui, toggleDropdown, togg
     Cat Roulette
   </div>
   <div className='options'>
-  <ProfileHover className='option' orientation='left' showName noTheme address={user.ethAddress}><div className='option'>{user.userProfile.name}</div></ProfileHover>
+  <ProfileHover className='option' orientation='left' showName noTheme address={user.ethAddress}><div className='option'>{user.userProfile.name ? user.userProfile.name : user.ethAddress}</div></ProfileHover>
   <div className='option' onClick={toggleAddImage}>Add New Image</div>
   <div className='option'>| </div>
   <div className='down-arrow' onMouseEnter={toggleDropdown}

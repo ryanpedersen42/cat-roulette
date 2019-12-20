@@ -4,8 +4,8 @@ import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 import ReactLoading from "react-loading";
 
-import { selectCurrentUI } from '../../redux/ui/ui.selectors';
 import { selectCurrentUserData } from '../../redux/user/user.selectors';
+import { selectCurrentPosts } from '../../redux/posts/posts.selectors';
 import { toggleAddImage, startLoading, endLoading } from '../../redux/ui/ui.actions';
 
 import './add-image-modal.styles.scss';
@@ -15,7 +15,7 @@ const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' 
 
 const mapStateToProps = createStructuredSelector({
   user: selectCurrentUserData, 
-  ui: selectCurrentUI
+  posts: selectCurrentPosts,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -32,7 +32,8 @@ class AddImageModal extends Component {
       imageDescription: '',
       buffer: null,
       petHash: null,
-      errorMessage: false
+      errorMessage: false,
+      posting: false
     }
   }
 
@@ -54,7 +55,7 @@ class AddImageModal extends Component {
   addTo3Box = async () => {
     const { petHash, imageDescription } = this.state;
     const { user } = this.props;
-    const myDappSpace = user.dappSpace;
+    const dappSpace = user.dappSpace;
     const date = moment().subtract(10, 'days').calendar().toString()
     const randomString = Math.random().toString(36).substring(2, 6)
     const key = `${date}_${randomString}`
@@ -68,7 +69,7 @@ class AddImageModal extends Component {
     ]
 
     try { 
-      await myDappSpace.public.set(key, JSON.stringify(imageInfo));
+      await dappSpace.public.set(key, JSON.stringify(imageInfo));
     } catch(err) {
       console.log(err);
     }
@@ -83,16 +84,18 @@ class AddImageModal extends Component {
   }
 
   onSubmit = (event) => {
-    const { toggleAddImage, startLoading, endLoading } = this.props;
+    const { toggleAddImage, user, posts } = this.props;
     const { imageDescription, buffer } = this.state;
     event.preventDefault()
+
+    const contract = posts.contract;
 
     if (!buffer || imageDescription.length < 1) {
       this.showAlert()
       return 
     }
 
-    startLoading()
+    this.setState({ posting: true})
     //add to IPFS
     ipfs.add(this.state.buffer, (error, result) => {
       const petHash = result[0].hash
@@ -104,18 +107,22 @@ class AddImageModal extends Component {
       //add to 3Box
       this.addTo3Box()
       this.setState({ buffer: null, imageDecription: ''})
-      endLoading()
+      contract.methods.addPetHash(result[0].hash).send({ from: user.ethAddress }).then((r) => {
+        console.log('response', r)
+      })
+      this.setState({ posting: false})
       toggleAddImage()
     })
   }
 
 render() {
-  const { toggleAddImage, ui } = this.props;
+  const { toggleAddImage } = this.props;
+  const { posting } = this.state;
 
   return (
     <div className='image-modal'>
     {
-      ui.isLoading ?  
+      posting ?  
       (     
       <div className='image-form'>
       <h3>Submitting post...</h3>

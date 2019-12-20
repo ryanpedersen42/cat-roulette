@@ -7,8 +7,9 @@ import { connect } from 'react-redux';
 import MainPage from './pages/main-page/main-page';
 import AuthPage from './pages/auth-page/auth-page';
 import ProfilePage from './pages/profile-page/profile-page';
+import Pet from './abis/Pet.json';
 
-import { setCurrentResult, setCurrentIPFS } from './redux/posts/posts.actions';
+import { setCurrentResult, setCurrentIPFS, setContract } from './redux/posts/posts.actions';
 import { selectCurrentPosts } from './redux/posts/posts.selectors';
 
 import { setEthAddress, logUserIn, setUserProfile, setBox, setDappSpace, logUserOut } from './redux/user/user.actions';
@@ -29,7 +30,8 @@ const mapDispatchToProps = dispatch => ({
   startLoading: () => dispatch(startLoading()),
   endLoading: () => dispatch(endLoading()),
   setCurrentResult: currentResult => dispatch(setCurrentResult(currentResult)),
-  setCurrentIPFS: currentIPFS => dispatch(setCurrentIPFS(currentIPFS))
+  setCurrentIPFS: currentIPFS => dispatch(setCurrentIPFS(currentIPFS)),
+  setContract: contract => dispatch(setContract(contract))
 });
 
 const mapStateToProps = createStructuredSelector({
@@ -52,7 +54,7 @@ class App extends Component {
       await startLoading()
       await this.loadWeb3()
       await this.auth3Box()
-      await this.fetchPosts()
+      await this.getContractAndPosts()
       await this.newImageHandler()
       await endLoading()
     } catch(err) {
@@ -66,6 +68,16 @@ class App extends Component {
 
     if (!box) history.push('/');
     this.setState({ isAppReady: true });
+  }
+
+  getContractAndPosts = async () => {
+    const { setCurrentIPFS, setContract } = this.props
+    const contract = await new web3.eth  // eslint-disable-line
+      .Contract(Pet.abi, '0x5621A96b6C3dfeA14e48a88291c37356bD892503');
+      await setContract(contract)
+      await this.setState({ contract })
+      const petHashes = await contract.methods.getHashes().call()
+      await setCurrentIPFS(petHashes)
   }
 
   loadWeb3 = async () => {
@@ -86,10 +98,9 @@ class App extends Component {
   }
 
   newImageHandler = async () => {
-    const { history, user, setCurrentResult, posts } = this.props;
+    const { history, setCurrentResult, posts } = this.props;
 
     const ipfsPosts = posts.ipfsPosts
-    const dappSpace = user.dappSpace;
   
     function getRandomInt(min, max) {
         min = Math.ceil(min);
@@ -99,9 +110,7 @@ class App extends Component {
     const randomKeyNumber = getRandomInt(0, ipfsPosts.length - 1)
     
     try {
-      const currentPost = await dappSpace.public.get(ipfsPosts[randomKeyNumber])
-      const parsedResult = JSON.parse(currentPost)
-      const currentResult = parsedResult[0]
+      const currentResult = ipfsPosts[randomKeyNumber]
       await setCurrentResult(currentResult)
 
       //re-render component
@@ -113,7 +122,7 @@ class App extends Component {
   }
 
   auth3Box = async () => {
-    const { user, logUserIn, history, setUserProfile, setBox, setDappSpace } = this.props;
+    const { user, logUserIn, setUserProfile, setBox, setDappSpace } = this.props;
 
     const box = await Box.openBox(user.ethAddress, window.ethereum, {});
     await new Promise((resolve, reject) => box.onSyncDone(resolve));
@@ -125,7 +134,7 @@ class App extends Component {
     await logUserIn()
     await setDappSpace(dappSpace)
     await setBox(box)
-    history.push('/main')
+    // history.push('/main')
   }
 
   handleLogout = async () => {
@@ -137,7 +146,8 @@ class App extends Component {
   }
 
   fetchPosts = async () => {
-    const { user, setCurrentIPFS } = this.props;
+    //fetch users posts
+    const { user } = this.props;
     const dappSpace = user.dappSpace;
     try {
       const dappSpaceData = await dappSpace.public.all()
@@ -147,8 +157,7 @@ class App extends Component {
           ipfsKeyArray.push(values)
         }
       });
-      console.log(dappSpaceData)
-      await setCurrentIPFS(ipfsKeyArray)
+      // set my posts here? might be better to define elsewhere 
     } catch(err) {
       console.error(err)
     }
@@ -174,6 +183,9 @@ class App extends Component {
                 <MainPage
                   newImageHandler={this.newImageHandler}
                   handleLogout={this.handleLogout}
+
+                  contract={this.state.contract}
+
                 />
               )}
             />

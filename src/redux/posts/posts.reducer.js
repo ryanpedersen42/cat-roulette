@@ -1,8 +1,9 @@
-import { SET_IPFS_POSTS, SET_CURRENT_RESULT } from '../constants';
+import { SET_IPFS_POSTS, SET_CURRENT_RESULT, SET_CONTRACT } from '../constants';
 
 const INITIAL_STATE = {
-  currentResult: {},
+  currentResult: null,
   ipfsPosts: [],
+  contract: null
 };
 
 const postsReducer = (state = INITIAL_STATE, action) => {
@@ -16,6 +17,11 @@ const postsReducer = (state = INITIAL_STATE, action) => {
         return {
           ...state,
           ipfsPosts: action.payload
+        };
+      case SET_CONTRACT: 
+        return {
+          ...state,
+          contract: action.payload
         };
     default:
       return state;

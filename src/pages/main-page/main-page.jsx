@@ -22,11 +22,11 @@ const mapDispatchToProps = dispatch => ({
   toggleAddImage: () => dispatch(toggleAddImage())
 });
 
-const MainPage = ({ handleLogout, newImageHandler, user, ui, posts }) => (
+const MainPage = ({ handleLogout, newImageHandler, user, ui, posts, contract }) => (
   <>
     <Header handleLogout={handleLogout} />
     {ui.addImageOpen ? (
-      <AddImageModal />
+      <AddImageModal contract={contract} />
     ) : (
       <>
         <div className="main-page">
@@ -36,10 +36,10 @@ const MainPage = ({ handleLogout, newImageHandler, user, ui, posts }) => (
           <div className="image-container">
             <img
               className="image"
-              src={`https://ipfs.infura.io/ipfs/${posts.currentResult.petHash}`}
+              src={`https://ipfs.infura.io/ipfs/${posts.currentResult}`}
               alt="current"
             />
-            <p>{posts.currentResult.imageDescription}</p>
+            {/* <p>{posts.currentResult.imageDescription}</p> */}
             <p>&nbsp;</p>
           </div>
           {user.box && posts.currentResult && <CommentComponent />}
