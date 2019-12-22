@@ -1,4 +1,4 @@
-import { TOGGLE_DROPDOWN, TOGGLE_ADD_IMAGE, START_LOADING_SCREEN, END_LOADING_SCREEN } from '../constants';
+import { TOGGLE_DROPDOWN, TOGGLE_ADD_IMAGE, START_LOADING_SCREEN, END_LOADING_SCREEN, RESET_STATE } from '../constants';
 
 const INITIAL_STATE = {
   dropdownOpen: false,
@@ -28,6 +28,12 @@ const uiReducer = (state = INITIAL_STATE, action) => {
         ...state,
         isLoading: false
       }
+      case RESET_STATE: 
+      return {
+        ...state,
+        dropdownOpen: false,
+        addImageOpen: false,
+      }      
     default:
       return state;
   }

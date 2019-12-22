@@ -4,30 +4,43 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectCurrentUserData } from '../../redux/user/user.selectors';
 import Header from '../../components/header/header';
+import { selectCurrentPosts } from "../../redux/posts/posts.selectors.js";
+import AddImageModal from "../../components/add-image-modal/add-image-modal";
+import { selectCurrentUI } from "../../redux/ui/ui.selectors";
 
 import './profile-page.styles.scss';
 
 const mapStateToProps = createStructuredSelector({
   user: selectCurrentUserData, 
+  posts: selectCurrentPosts,
+  ui: selectCurrentUI
 })
 
-const ProfilePage = ({ user, handleLogout }) => (
+const ProfilePage = ({ user, handleLogout, ui, posts }) => (
   <>
   <Header       
     box={user.box}
     handleLogout={handleLogout}
   />
-  <h1>My Profile Page</h1>
-  <div className='profile-page'>
-      <div className='profile-edit'>
-        <EditProfile
-            box={user.box}
-            space={user.dappSpace}
-            currentUserAddr={user.ethAddress}
-            currentUser3BoxProfile={user.userProfile}
-        />
-      </div>
-     </div>
+  {
+    ui.addImageOpen ? (
+      <AddImageModal contract={posts.contract} />
+    ) : (
+      <>
+        <h1>My Profile Page</h1>
+        <div className='profile-page'>
+            <div className='profile-edit'>
+              <EditProfile
+                  box={user.box}
+                  space={user.dappSpace}
+                  currentUserAddr={user.ethAddress}
+                  currentUser3BoxProfile={user.userProfile}
+              />
+            </div>
+          </div>
+      </>
+    )
+  }
   </>
 )
 

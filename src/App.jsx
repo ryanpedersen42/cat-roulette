@@ -57,6 +57,7 @@ class App extends Component {
       await this.auth3Box()
       await this.getContractAndPosts()
       await this.newImageHandler()
+      await this.fetchPosts()
       await endLoading()
     } catch(err) {
       console.error(err)
@@ -76,7 +77,6 @@ class App extends Component {
     const contract = await new web3.eth  // eslint-disable-line
       .Contract(Pet.abi, '0x892de2063c8F898E21A9A1d4b981F7446a561Fe3');
       await setContract(contract)
-      await this.setState({ contract })
       const petHashes = await contract.methods.getHashes().call()
       await setCurrentIPFS(petHashes)
   }
@@ -150,17 +150,17 @@ class App extends Component {
 
   fetchPosts = async () => {
     //fetch users posts
-    const { user } = this.props;
+    const { user, setUserPosts } = this.props;
     const dappSpace = user.dappSpace;
     try {
       const dappSpaceData = await dappSpace.public.all()
       let ipfsKeyArray = []
       Object.keys(dappSpaceData).forEach((values) => {
-        if (values.length === 15) {
+        if (values.length === 46) {
           ipfsKeyArray.push(values)
         }
       });
-      // set my posts here? might be better to define elsewhere 
+      setUserPosts(ipfsKeyArray)
     } catch(err) {
       console.error(err)
     }
@@ -186,9 +186,6 @@ class App extends Component {
                 <MainPage
                   newImageHandler={this.newImageHandler}
                   handleLogout={this.handleLogout}
-
-                  contract={this.state.contract}
-
                 />
               )}
             />

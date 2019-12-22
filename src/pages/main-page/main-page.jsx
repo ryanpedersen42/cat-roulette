@@ -26,7 +26,7 @@ const MainPage = ({ handleLogout, newImageHandler, user, ui, posts, contract }) 
   <>
     <Header handleLogout={handleLogout} />
     {ui.addImageOpen ? (
-      <AddImageModal contract={contract} />
+      <AddImageModal contract={posts.contract} />
     ) : (
       <>
         <div className="main-page">
