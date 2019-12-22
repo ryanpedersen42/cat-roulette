@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import moment from 'moment';
+// import moment from 'moment';
 import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 import ReactLoading from "react-loading";
@@ -56,22 +56,21 @@ class AddImageModal extends Component {
     const { petHash, imageDescription } = this.state;
     const { user } = this.props;
     const dappSpace = user.dappSpace;
-    const date = moment().subtract(10, 'days').calendar().toString()
-    const randomString = Math.random().toString(36).substring(2, 6)
-    const key = `${date}_${randomString}`
+    // const date = moment().subtract(10, 'days').calendar().toString()
+    // const randomString = Math.random().toString(36).substring(2, 6)
+    // const key = `${date}_${randomString}`
 
-    const imageInfo = [
-      {
-        ethAddress: user.ethAddress,
-        petHash: petHash,
-        imageDescription: imageDescription,
-      }
-    ]
+    // const imageInfo = [
+    //   {
+    //     petHash: petHash,
+    //     imageDescription: imageDescription,
+    //   }
+    // ]
 
     try { 
-      await dappSpace.public.set(key, JSON.stringify(imageInfo));
+      await dappSpace.public.set(petHash, imageDescription);
     } catch(err) {
-      console.log(err);
+      console.err(err);
     }
   }
 

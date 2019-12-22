@@ -12,7 +12,7 @@ import Pet from './abis/Pet.json';
 import { setCurrentResult, setCurrentIPFS, setContract } from './redux/posts/posts.actions';
 import { selectCurrentPosts } from './redux/posts/posts.selectors';
 
-import { setEthAddress, logUserIn, setUserProfile, setBox, setDappSpace, logUserOut } from './redux/user/user.actions';
+import { setEthAddress, logUserIn, setUserProfile, setBox, setDappSpace, logUserOut, setUserPosts } from './redux/user/user.actions';
 import { startLoading, endLoading } from './redux/ui/ui.actions';
 import { selectCurrentUserData } from './redux/user/user.selectors';
 
@@ -31,7 +31,8 @@ const mapDispatchToProps = dispatch => ({
   endLoading: () => dispatch(endLoading()),
   setCurrentResult: currentResult => dispatch(setCurrentResult(currentResult)),
   setCurrentIPFS: currentIPFS => dispatch(setCurrentIPFS(currentIPFS)),
-  setContract: contract => dispatch(setContract(contract))
+  setContract: contract => dispatch(setContract(contract)),
+  setUserPosts: posts => dispatch(setUserPosts(posts))
 });
 
 const mapStateToProps = createStructuredSelector({
@@ -73,12 +74,14 @@ class App extends Component {
   getContractAndPosts = async () => {
     const { setCurrentIPFS, setContract } = this.props
     const contract = await new web3.eth  // eslint-disable-line
-      .Contract(Pet.abi, '0x5621A96b6C3dfeA14e48a88291c37356bD892503');
+      .Contract(Pet.abi, '0x892de2063c8F898E21A9A1d4b981F7446a561Fe3');
       await setContract(contract)
       await this.setState({ contract })
       const petHashes = await contract.methods.getHashes().call()
       await setCurrentIPFS(petHashes)
   }
+
+  // truffle contract addr 0x5621A96b6C3dfeA14e48a88291c37356bD892503
 
   loadWeb3 = async () => {
     const { setEthAddress } = this.props;
@@ -134,14 +137,14 @@ class App extends Component {
     await logUserIn()
     await setDappSpace(dappSpace)
     await setBox(box)
-    // history.push('/main')
   }
 
   handleLogout = async () => {
-    const { history, user } = this.props;
+    const { history, user, logUserOut } = this.props;
     const box = user.box;
 
     await box.logout();
+    await logUserOut()
     history.push('/');
   }
 

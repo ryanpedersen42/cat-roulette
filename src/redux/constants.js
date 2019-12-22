@@ -5,6 +5,7 @@ export const LOG_IN = 'LOG_IN ';
 export const SET_USER_PROFILE = 'SET_USER_PROFILE';
 export const SET_BOX = 'SET_BOX';
 export const SET_DAPP = 'SET_DAPP';
+export const SET_USER_POSTS = 'SET_USER_POSTS';
 
 //posts consts
 export const SET_CURRENT_RESULT = 'SET_CURRENT_RESULT';

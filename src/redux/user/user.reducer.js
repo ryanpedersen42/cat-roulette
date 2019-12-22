@@ -5,7 +5,8 @@ const INITIAL_STATE = {
   isAuth: false,
   userProfile: null,
   box: null,
-  dappSpace: ''
+  dappSpace: '',
+  userPosts: [],
 };
 
 const userReducer = (state = INITIAL_STATE, action) => {
