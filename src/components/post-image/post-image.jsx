@@ -3,9 +3,9 @@ import React from 'react';
 import './post-image.styles.scss';
 
 const PostImage = ({ imageDescription, petHash }) => (
-  <div className='post-image'>
+  <div className='image-container'>
       <img
-        className='image-container'
+        className='image'
         src={`https://ipfs.infura.io/ipfs/${petHash}`}
         alt="current"
       />  
