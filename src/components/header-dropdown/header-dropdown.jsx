@@ -14,6 +14,7 @@ const HeaderDropdown = ({ handleLogout, history, resetState }) => (
   <div className="header-dropdown">
     <div>
       {history.location.pathname === "/main" ? (
+        <>
         <CustomButton
           className="dropdown-items"
           onClick={() => {
@@ -23,6 +24,16 @@ const HeaderDropdown = ({ handleLogout, history, resetState }) => (
             }>
           MY PROFILE
         </CustomButton>
+        <CustomButton
+          className="dropdown-items"
+          onClick={() => {
+          history.push("/posts")
+          resetState()
+          }}
+        >
+          MY POSTS
+        </CustomButton>
+        </>
       ) : history.location.pathname === "/profile" ? (
         <>
         <CustomButton
@@ -44,7 +55,28 @@ const HeaderDropdown = ({ handleLogout, history, resetState }) => (
           MY POSTS
         </CustomButton>
         </>
-      ) : null}
+      ) : history.location.pathname === "/posts" ? (
+        <>
+        <CustomButton
+          className="dropdown-items"
+          onClick={() => {
+          history.push("/main")
+          resetState()
+          }}
+        >
+          HOME
+        </CustomButton>
+        <CustomButton
+          className="dropdown-items"
+          onClick={() => {
+            history.push("/profile")
+            resetState()
+            }
+            }>
+          MY PROFILE
+        </CustomButton>
+        </>
+        ) : null }
       <CustomButton className="dropdown-items" onClick={handleLogout}>
         SIGN OUT
       </CustomButton>

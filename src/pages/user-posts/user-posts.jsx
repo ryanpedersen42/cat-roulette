@@ -22,7 +22,6 @@ const UserPosts = ({ user }) => {
               <PostImage
                 key={i}
                 petHash={userPost}
-                // imageDescription={userPost[i].imageDescription}
                 />
             );
         })
