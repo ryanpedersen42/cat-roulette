@@ -1,0 +1,17 @@
+.post-image {
+  .image-container {
+    max-width: 30%;
+    max-height: 30%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-direction: column;
+    margin: 0 auto;
+
+    .image {
+      border-color: black;
+      border-width: 2px;
+      border-style: solid;
+    }
+  }
+}

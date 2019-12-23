@@ -1,4 +1,4 @@
-import { SET_ETH_ADDRESS, LOG_IN, LOG_OUT, SET_USER_PROFILE, SET_BOX, SET_DAPP } from '../constants';
+import { SET_ETH_ADDRESS, LOG_IN, LOG_OUT, SET_USER_PROFILE, SET_BOX, SET_DAPP, SET_USER_POSTS } from '../constants';
 
 const INITIAL_STATE = {
   ethAddress: '',
@@ -43,6 +43,11 @@ const userReducer = (state = INITIAL_STATE, action) => {
           ...state,
           userProfile: action.payload
         }
+      case SET_USER_POSTS: 
+        return {
+          ...state,
+          userPosts: action.payload
+      }
     default:
       return state;
   }

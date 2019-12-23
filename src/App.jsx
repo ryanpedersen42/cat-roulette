@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import MainPage from './pages/main-page/main-page';
 import AuthPage from './pages/auth-page/auth-page';
 import ProfilePage from './pages/profile-page/profile-page';
+import UserPosts from './pages/user-posts/user-posts';
 import Pet from './abis/Pet.json';
 
 import { setCurrentResult, setCurrentIPFS, setContract } from './redux/posts/posts.actions';
@@ -193,8 +194,14 @@ class App extends Component {
               exact
               path='/profile'
               render={() => (
-                <ProfilePage
-                />
+                <ProfilePage/>
+                )}
+              />
+            <Route
+              exact
+              path='/posts'
+              render={() => (
+                <UserPosts/>
                 )}
                 />
           </Switch>
