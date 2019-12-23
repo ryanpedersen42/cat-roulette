@@ -18,13 +18,10 @@ const mapStateToProps = createStructuredSelector({
 
 const ProfilePage = ({ user, handleLogout, ui, posts }) => (
   <>
-  <Header       
-    box={user.box}
-    handleLogout={handleLogout}
-  />
+  <Header />
   {
     ui.addImageOpen ? (
-      <AddImageModal contract={posts.contract} />
+      <AddImageModal />
     ) : (
       <>
         <h1>My Profile Page</h1>

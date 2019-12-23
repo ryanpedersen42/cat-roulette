@@ -82,8 +82,6 @@ class App extends Component {
       await setCurrentIPFS(petHashes)
   }
 
-  // truffle contract addr 0x5621A96b6C3dfeA14e48a88291c37356bD892503
-
   loadWeb3 = async () => {
     const { setEthAddress } = this.props;
 
