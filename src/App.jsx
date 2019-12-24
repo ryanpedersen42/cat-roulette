@@ -192,14 +192,18 @@ class App extends Component {
               exact
               path='/profile'
               render={() => (
-                <ProfilePage/>
+                <ProfilePage
+                handleLogout={this.handleLogout}
+                />
                 )}
               />
             <Route
               exact
               path='/posts'
               render={() => (
-                <UserPosts/>
+                <UserPosts
+                handleLogout={this.handleLogout}
+                />
                 )}
                 />
           </Switch>

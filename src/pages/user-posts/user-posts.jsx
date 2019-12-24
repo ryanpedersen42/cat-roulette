@@ -17,11 +17,11 @@ const mapStateToProps = createStructuredSelector({
   ui: selectCurrentUI
 })
 
-const UserPosts = ({ user, ui }) => {
+const UserPosts = ({ user, ui, handleLogout }) => {
   const userPosts = user.userPosts;
   return (
     <>
-  <Header />
+  <Header handleLogout={handleLogout} />
   {
     ui.addImageOpen ? (
       <AddImageModal />

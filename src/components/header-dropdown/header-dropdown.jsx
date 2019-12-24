@@ -77,7 +77,10 @@ const HeaderDropdown = ({ handleLogout, history, resetState }) => (
         </CustomButton>
         </>
         ) : null }
-      <CustomButton className="dropdown-items" onClick={handleLogout}>
+      <CustomButton className="dropdown-items" onClick={() => {
+            handleLogout()
+            history.push("/")
+            }}>
         SIGN OUT
       </CustomButton>
     </div>
