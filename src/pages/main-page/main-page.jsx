@@ -39,7 +39,6 @@ const MainPage = ({ handleLogout, newImageHandler, user, ui, posts, contract }) 
               src={`https://ipfs.infura.io/ipfs/${posts.currentResult}`}
               alt="current"
             />
-            {/* <p>{posts.currentResult.imageDescription}</p> */}
             <p>&nbsp;</p>
           </div>
           {user.box && posts.currentResult && <CommentComponent />}

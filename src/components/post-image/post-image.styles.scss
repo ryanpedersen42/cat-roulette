@@ -1,6 +1,4 @@
   .image-container {
-    max-width: 30%;
-    max-height: 30%;
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -11,5 +9,20 @@
       border-color: black;
       border-width: 2px;
       border-style: solid;
+      max-width: 30%;
+      max-height: 30%;
     }
-}
+    .selected {
+      max-width: 45%;
+      max-height: 45%;  
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-direction: column;
+    }
+
+    .image-comments {
+      padding: 20px;
+      margin: 0 auto;
+    }
+  }

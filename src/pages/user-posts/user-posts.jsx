@@ -17,7 +17,7 @@ const mapStateToProps = createStructuredSelector({
   ui: selectCurrentUI
 })
 
-const UserPosts = ({ user, ui, posts }) => {
+const UserPosts = ({ user, ui }) => {
   const userPosts = user.userPosts;
   return (
     <>
@@ -34,6 +34,7 @@ const UserPosts = ({ user, ui, posts }) => {
                     <PostImage
                       key={i}
                       petHash={userPost}
+                      imageDescription={userPosts.imageDescription}
                       />
                   );
               })

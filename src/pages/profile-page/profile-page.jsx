@@ -16,7 +16,7 @@ const mapStateToProps = createStructuredSelector({
   ui: selectCurrentUI
 })
 
-const ProfilePage = ({ user, handleLogout, ui, posts }) => (
+const ProfilePage = ({ user, ui }) => (
   <>
   <Header />
   {
