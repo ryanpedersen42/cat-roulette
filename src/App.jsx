@@ -130,6 +130,7 @@ class App extends Component {
     await new Promise((resolve, reject) => box.onSyncDone(resolve));
 
     const dappSpace = await box.openSpace('catRoulette');
+
     const userProfile = await Box.getProfile(user.ethAddress)
 
     await setUserProfile(userProfile)
