@@ -73,15 +73,6 @@ class App extends Component {
     this.setState({ isAppReady: true });
   }
 
-  getContractAndPosts = async () => {
-    const { setCurrentIPFS, setContract } = this.props
-    const contract = await new web3.eth  // eslint-disable-line
-      .Contract(Pet.abi, '0x892de2063c8F898E21A9A1d4b981F7446a561Fe3');
-      await setContract(contract)
-      const petHashes = await contract.methods.getHashes().call()
-      await setCurrentIPFS(petHashes)
-  }
-
   loadWeb3 = async () => {
     const { setEthAddress } = this.props;
 
@@ -98,6 +89,32 @@ class App extends Component {
       window.alert('Non-Ethereum browser detected!')
     }
   }
+  
+  auth3Box = async () => {
+    const { user, logUserIn, setUserProfile, setBox, setDappSpace } = this.props;
+
+    const box = await Box.openBox(user.ethAddress, window.ethereum, {});
+    await new Promise((resolve, reject) => box.onSyncDone(resolve));
+
+    const dappSpace = await box.openSpace('catRoulette');
+
+    const userProfile = await Box.getProfile(user.ethAddress)
+
+    await setUserProfile(userProfile)
+    await logUserIn()
+    await setDappSpace(dappSpace)
+    await setBox(box)
+  }
+
+  getContractAndPosts = async () => {
+    const { setCurrentIPFS, setContract } = this.props
+    const contract = await new web3.eth  // eslint-disable-line
+      .Contract(Pet.abi, '0x892de2063c8F898E21A9A1d4b981F7446a561Fe3');
+      await setContract(contract)
+      const petHashes = await contract.methods.getHashes().call()
+      await setCurrentIPFS(petHashes)
+  }
+
 
   newImageHandler = async () => {
     const { history, setCurrentResult, posts } = this.props;
@@ -123,21 +140,6 @@ class App extends Component {
     }
   }
 
-  auth3Box = async () => {
-    const { user, logUserIn, setUserProfile, setBox, setDappSpace } = this.props;
-
-    const box = await Box.openBox(user.ethAddress, window.ethereum, {});
-    await new Promise((resolve, reject) => box.onSyncDone(resolve));
-
-    const dappSpace = await box.openSpace('catRoulette');
-
-    const userProfile = await Box.getProfile(user.ethAddress)
-
-    await setUserProfile(userProfile)
-    await logUserIn()
-    await setDappSpace(dappSpace)
-    await setBox(box)
-  }
 
   handleLogout = async () => {
     const { history, user, logUserOut } = this.props;

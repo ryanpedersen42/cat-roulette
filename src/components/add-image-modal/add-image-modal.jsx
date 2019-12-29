@@ -56,16 +56,6 @@ class AddImageModal extends Component {
     const { petHash, imageDescription } = this.state;
     const { user } = this.props;
     const dappSpace = user.dappSpace;
-    // const date = moment().subtract(10, 'days').calendar().toString()
-    // const randomString = Math.random().toString(36).substring(2, 6)
-    // const key = `${date}_${randomString}`
-
-    // const imageInfo = [
-    //   {
-    //     petHash: petHash,
-    //     imageDescription: imageDescription,
-    //   }
-    // ]
 
     try { 
       await dappSpace.public.set(petHash, imageDescription);
