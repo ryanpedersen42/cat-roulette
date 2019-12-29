@@ -17,7 +17,7 @@
     flex-direction: column;
     margin: 0 auto;
 
-    .image {
+    .main-page-image {
       border-color: black;
       max-width: 50%;
       max-height: 50%;
@@ -27,7 +27,7 @@
     
     .option {
       padding: 10px 15px;
-      // cursor: pointer;
+      cursor: pointer;
       color: white;
     }
   }

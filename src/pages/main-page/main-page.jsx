@@ -35,7 +35,7 @@ const MainPage = ({ handleLogout, newImageHandler, user, ui, posts, contract }) 
           </div>
           <div className="image-container">
             <img
-              className="image"
+              className="main-page-image"
               src={`https://ipfs.infura.io/ipfs/${posts.currentResult}`}
               alt="current"
             />
