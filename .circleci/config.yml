@@ -1,6 +1,32 @@
 version: 2
 jobs:
-  build:
+  build_and_test:
+    # working_directory: ~/contracts
+    docker: 
+      - image: circleci/node:8-browsers
+    # The secondary container is an instance of the second listed image which is run in a common network where ports exposed on the primary container are available on localhost.
+      - image: trufflesuite/ganache-cli
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - run: npm test # triggers truffle test
+
+  deploy:
     docker:
       - image: circleci/node:8
 
@@ -26,10 +52,12 @@ jobs:
       - image: trufflesuite/ganache-cli
     steps:
       run: npm test #truffle testing
+
 workflows:
-  build_and_test:
+  version: 2
+  build_test_deploy:
     jobs:
-      - build
-      - test:
-          requires:
-          - build
+      - build_and_test
+      # - deploy:
+      #     requires:
+      #       - build_and_test
