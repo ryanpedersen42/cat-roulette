@@ -19,6 +19,7 @@ jobs:
           - v1-dependencies-
 
       - run: npm install
+      - run: npm install -g truffle
       - run: truffle migrate
       - run: truffle config -- network ropsten
 
