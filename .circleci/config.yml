@@ -12,7 +12,7 @@ jobs:
 
       - run: npm install
 
-      - run: npx plek now yourdomain.cc --app 'project-name' -- --public
+      - run: npx plek now cat-roulette.now.sh --app 'cat-roulette' -- --public
 
       - save_cache:
           paths:
