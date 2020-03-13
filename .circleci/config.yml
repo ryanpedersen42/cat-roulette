@@ -44,14 +44,14 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-  test:
-    # working_directory: ~/contracts
-    docker: 
-      - image: circleci/node:8-browsers
-    # The secondary container is an instance of the second listed image which is run in a common network where ports exposed on the primary container are available on localhost.
-      - image: trufflesuite/ganache-cli
-    steps:
-      run: npm test #truffle testing
+  # test:
+  #   # working_directory: ~/contracts
+  #   docker: 
+  #     - image: circleci/node:8-browsers
+  #   # The secondary container is an instance of the second listed image which is run in a common network where ports exposed on the primary container are available on localhost.
+  #     - image: trufflesuite/ganache-cli
+  #   steps:
+  #     run: npm test #truffle testing
 
 workflows:
   version: 2
