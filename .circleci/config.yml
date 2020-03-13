@@ -24,7 +24,7 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-      - run: npm test # triggers truffle test
+      - run: truffle test # triggers truffle test
 
   deploy:
     docker:
