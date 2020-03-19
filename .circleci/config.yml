@@ -9,43 +9,16 @@ jobs:
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
-
-      - run: 
-          name: npm install
-          command: npm install
-      - run:
-          name: check info
-          command: node -v
-      - run:
-          name: deploy
-          command: |
-            URL=$(now -t ${NOW_TOKEN} )
-            NOW_URL=$(echo ${URL} | sed s/'http:\/\/'/''/g | sed s/'https:\/\/'//g)
-            npx now -t ${NOW_TOKEN} alias set ${NOW_URL} cat-roulette.now.sh
-          
-          # npx now --token $NOW_TOKEN cat-roulette.now.sh -- --public --silent
-
-          # command: npx now run deploy --silent -- --token $NOW_TOKEN
-      # - run:
-      #     name: install now
-      #     command: npm i -g now --silent
-      # - run:
-      #     name: deploy to now
-      #     command: |
-      #       URL=$(now -t ${NOW_TOKEN} )
-      #       NOW_URL=$(echo ${URL} | sed s/'http:\/\/'/''/g | sed s/'https:\/\/'//g)
-      #       now -t ${NOW_TOKEN} cat-roulette.now.sh --app 'cat-roulette' -- --public
-
-    # - URL=$(now -t ${NOW_TOKEN} )
-    # - .NOW_URL=$(echo ${URL} | sed s/'http:\/\/'/''/g | sed s/'https:\/\/'//g)
-    # - now -t ${NOW_TOKEN} alias set ${NOW_URL} staging.mydomain.com
-
-      # - run: npx plek now cat-roulette.now.sh --app 'cat-roulette' -- --public
-
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
+      - run: 
+          name: npm install
+          command: npm install
+      - run:
+          name: deploy
+          command: npx plek now cat-roulette.now.sh --app 'cat-roulette' -- --public
 
 workflows:
   version: 2
