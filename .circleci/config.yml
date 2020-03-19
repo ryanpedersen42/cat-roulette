@@ -14,14 +14,17 @@ jobs:
           name: npm install
           command: npm install
       - run:
-          name: install now
-          command: npm i -g now --silent
-      - run:
-          name: deploy to now
-          command: |
-            URL=$(now -t ${NOW_TOKEN} )
-            NOW_URL=$(echo ${URL} | sed s/'http:\/\/'/''/g | sed s/'https:\/\/'//g)
-            now -t ${NOW_TOKEN} cat-roulette.now.sh --app 'cat-roulette' -- --public
+          name: now scripts
+          command: npx now alias cat-roulette.now.sh --app 'cat-roulette' -- --public -t $NOW_TOKEN
+      # - run:
+      #     name: install now
+      #     command: npm i -g now --silent
+      # - run:
+      #     name: deploy to now
+      #     command: |
+      #       URL=$(now -t ${NOW_TOKEN} )
+      #       NOW_URL=$(echo ${URL} | sed s/'http:\/\/'/''/g | sed s/'https:\/\/'//g)
+      #       now -t ${NOW_TOKEN} cat-roulette.now.sh --app 'cat-roulette' -- --public
 
     # - URL=$(now -t ${NOW_TOKEN} )
     # - .NOW_URL=$(echo ${URL} | sed s/'http:\/\/'/''/g | sed s/'https:\/\/'//g)
