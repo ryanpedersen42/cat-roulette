@@ -15,7 +15,11 @@ jobs:
           command: npm install
       - run:
           name: now scripts
-          command: npx now alias cat-roulette.now.sh --app 'cat-roulette' -- --public -t $NOW_TOKEN
+          command: |
+            npm install -g --unsafe-perm now@latest
+            node --version
+            npm --version
+            npm run deploy --silent -- --token $NOW_TOKEN
       # - run:
       #     name: install now
       #     command: npm i -g now --silent
