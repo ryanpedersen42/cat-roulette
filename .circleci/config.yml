@@ -18,7 +18,12 @@ jobs:
           command: node -v
       - run:
           name: deploy
-          command: npx now --token $NOW_TOKEN cat-roulette.now.sh -- --public --silent
+          command: |
+            URL=$(now -t ${NOW_TOKEN} )
+            NOW_URL=$(echo ${URL} | sed s/'http:\/\/'/''/g | sed s/'https:\/\/'//g)
+            npx now -t ${NOW_TOKEN} alias set ${NOW_URL} cat-roulette.now.sh
+          
+          # npx now --token $NOW_TOKEN cat-roulette.now.sh -- --public --silent
 
           # command: npx now run deploy --silent -- --token $NOW_TOKEN
       # - run:
