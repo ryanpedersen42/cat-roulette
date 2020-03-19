@@ -1,34 +1,5 @@
 version: 2
 jobs:
-  #taking the below out for now.. need to work on testing local blockchain
-  # build_and_test:
-  #   docker: 
-  #     - image: circleci/node:8-browsers
-  #   # The secondary container is an instance of the second listed image which is run in a common network where ports exposed on the primary container are available on localhost.
-  #     - image: trufflesuite/ganache-cli
-
-  #   steps:
-  #     - checkout
-
-  #     # Download and cache dependencies
-  #     - restore_cache:
-  #         keys:
-  #         - v1-dependencies-{{ checksum "package.json" }}
-  #         # fallback to using the latest cache if no exact match is found
-  #         - v1-dependencies-
-
-  #     - run: npm install
-  #     # - run: npm install -g truffle
-  #     - run: truffle migrate
-  #     - run: truffle config -- network ropsten
-
-  #     - save_cache:
-  #         paths:
-  #           - node_modules
-  #         key: v1-dependencies-{{ checksum "package.json" }}
-
-  #     - run: npm test # triggers truffle test
-
   deploy:
     docker:
       - image: circleci/node:8
@@ -39,9 +10,24 @@ jobs:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
 
-      - run: npm install
+      - run: 
+          name: npm install
+          command: npm install
+      - run:
+          name: install now
+          command: npm i -g now --silent
+      - run:
+          name: deploy to now
+          command: |
+            URL=$(now -t ${NOW_TOKEN} )
+            NOW_URL=$(echo ${URL} | sed s/'http:\/\/'/''/g | sed s/'https:\/\/'//g)
+            now -t ${NOW_TOKEN} cat-roulette.now.sh --app 'cat-roulette' -- --public
 
-      - run: npx plek now cat-roulette.now.sh --app 'cat-roulette' -- --public
+    # - URL=$(now -t ${NOW_TOKEN} )
+    # - .NOW_URL=$(echo ${URL} | sed s/'http:\/\/'/''/g | sed s/'https:\/\/'//g)
+    # - now -t ${NOW_TOKEN} alias set ${NOW_URL} staging.mydomain.com
+
+      # - run: npx plek now cat-roulette.now.sh --app 'cat-roulette' -- --public
 
       - save_cache:
           paths:
