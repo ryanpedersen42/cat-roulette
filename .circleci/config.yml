@@ -16,7 +16,7 @@ jobs:
       - run:
           name: now scripts
           command: |
-            npm install -g --unsafe-perm now@latest
+            npm install -g --unsafe-perm now
             node --version
             npm --version
             npm run deploy --silent -- --token $NOW_TOKEN
