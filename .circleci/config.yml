@@ -14,12 +14,15 @@ jobs:
           name: npm install
           command: npm install
       - run:
-          name: now scripts
-          command: |
-            npm install -g --unsafe-perm now
-            node --version
-            npm --version
-            npm run deploy --silent -- --token $NOW_TOKEN
+          name: npm i scripts
+          command: npm install -g --unsafe-perm now
+      - run:
+          name: check info
+          command: node -v
+      - run:
+          name: deploy
+          command: npm now run deploy --silent -- --token $NOW_TOKEN
+
       # - run:
       #     name: install now
       #     command: npm i -g now --silent
