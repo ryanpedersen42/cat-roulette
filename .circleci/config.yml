@@ -15,7 +15,7 @@ jobs:
           command: npm install
       - run:
           name: npm i scripts
-          command: npm install -g --unsafe-perm now
+          command: npm install -g now
       - run:
           name: check info
           command: node -v
