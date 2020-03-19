@@ -18,8 +18,9 @@ jobs:
           command: node -v
       - run:
           name: deploy
-          command: npx now run deploy --silent -- --token $NOW_TOKEN
+          command: npx now cat-roulette.now.sh --app 'cat-roulette' -- --public --token $NOW_TOKEN
 
+          # command: npx now run deploy --silent -- --token $NOW_TOKEN
       # - run:
       #     name: install now
       #     command: npm i -g now --silent
