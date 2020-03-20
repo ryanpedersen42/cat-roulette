@@ -1,4 +1,7 @@
-version: 2
+version: 2.1
+orbs:
+  cypress: cypress-io/cypress@1
+
 jobs:
   deploy:
     docker:
@@ -16,15 +19,14 @@ jobs:
       - run: 
           name: npm install
           command: npm install
-      - run:
-          name: tests
-          command: npm start && npm run cypress:open
+      - cypress/run:
+          start: npm start
+          parallelism: 4
       - run:
           name: deploy
           command: npx plek now cat-roulette.now.sh --app 'cat-roulette' -- --public
 
 workflows:
-  version: 2
   build_and_deploy:
     jobs:
       - deploy:
