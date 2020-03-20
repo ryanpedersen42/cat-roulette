@@ -27,7 +27,7 @@ jobs:
           command: npx plek now cat-roulette.now.sh --app 'cat-roulette' -- --public
 
 workflows:
-  build_and_deploy:
+  deploy:
     jobs:
       - deploy:
           filters:
