@@ -30,7 +30,6 @@ jobs:
       - slack/notify:
           channel: TJ7LRE38F
           message: deployed
-          webhook: https://hooks.slack.com/services/$SLACK_WEBHOOK
 
 workflows:
   build_and_deploy:
