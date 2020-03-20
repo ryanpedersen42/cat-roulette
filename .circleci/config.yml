@@ -19,10 +19,6 @@ jobs:
       - run: 
           name: npm install
           command: npm install
-  test:
-    - cypress/run:
-        start: npm start
-        parallelism: 4
   deploy:
     docker:
       - image: circleci/node:10.16.3
@@ -35,7 +31,9 @@ workflows:
   build_and_deploy:
     jobs:
       - build
-      - test
+      - cypress/run:
+          start: npm start
+          parallelism: 4
       - deploy:
           filters:
             branches: 
