@@ -28,7 +28,7 @@ jobs:
           name: deploy
           command: npx plek now cat-roulette.now.sh --app 'cat-roulette' -- --public
       - slack/notify:
-          channel: TJ7LRE38F
+          channel: DV57HNXMX
           message: deployed
 
 workflows:
