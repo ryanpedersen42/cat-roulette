@@ -34,7 +34,10 @@ workflows:
       - cypress/run:
           start: npm start
           parallelism: 4
+          requires: build
       - deploy:
+          requires:
+          - cypress/run
           filters:
             branches: 
               only:
