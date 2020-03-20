@@ -18,7 +18,7 @@ jobs:
           command: npm install
       - run:
           name: tests
-          command: npm run cypress:open
+          command: npm start && npm run cypress:open
       - run:
           name: deploy
           command: npx plek now cat-roulette.now.sh --app 'cat-roulette' -- --public
